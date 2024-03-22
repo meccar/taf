@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const contactForm = require("../api/contact.api.js");
+const apiContact = require("../api/contact.api.js");
+const apiRegister = require("../api/register.api.js");
 
 router.get("/", (req, res) => {
   // Send environment variables as an object
@@ -8,6 +9,7 @@ router.get("/", (req, res) => {
 });
 
 // Define routes
-router.post("/v1/contact", contactForm.submitForm);
+router.post("/v1/contact", apiContact.contactForm);
+router.post("/v1/register", apiRegister.registerForm);
 
 module.exports = router;

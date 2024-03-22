@@ -1,7 +1,7 @@
 const Contact = require("../models/contact.models.js");
 const validator = require("validator");
 
-exports.submitForm = async (req, res, next) => {
+exports.contactForm = async (req, res, next) => {
   try {
     const { name, email, phone, message } = req.body;
     // console.log("name:", name);
@@ -25,10 +25,7 @@ exports.submitForm = async (req, res, next) => {
       return res.status(400).json({ message: "Please enter valid email" });
     }
 
-    if (
-      !validator.isNumeric(String(phone)) ||
-      !validator.isLength(String(phone), { min: 10, max: 14 })
-    ) {
+    if (!validator.isMobilePhone(String(phone), "vi-VN")) {
       return res
         .status(400)
         .json({ message: "Please enter valid phone number" });

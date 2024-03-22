@@ -1,10 +1,9 @@
-const { Int32 } = require("mongodb");
 const mongoose = require("mongoose");
 
 const ContactSchema = mongoose.Schema({
-  name: { type: String },
-  email: { type: String },
-  phone: { type: Number },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: Number, required: true },
   message: { type: String },
 });
 
