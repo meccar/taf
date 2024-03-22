@@ -17,19 +17,19 @@ exports.contactForm = async (req, res, next) => {
         .json({ message: "Name, email, and phone are required fields" });
     }
 
-    if (!validator.isLength(name, { min: 3, max: 35 })) {
-      return res.status(400).json({ message: "Please enter valid name" });
-    }
+    // if (!validator.isLength(name, { min: 3, max: 35 })) {
+    //   return res.status(400).json({ message: "Please enter valid name" });
+    // }
 
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: "Please enter valid email" });
-    }
+    // if (!validator.isEmail(email)) {
+    //   return res.status(400).json({ message: "Please enter valid email" });
+    // }
 
-    if (!validator.isMobilePhone(String(phone), "vi-VN")) {
-      return res
-        .status(400)
-        .json({ message: "Please enter valid phone number" });
-    }
+    // if (!validator.isMobilePhone(String(phone), "vi-VN")) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Please enter valid phone number" });
+    // }
 
     // Create a new contact instance
     const newContact = new Contact({
@@ -45,6 +45,6 @@ exports.contactForm = async (req, res, next) => {
     res.status(201).json({ message: "Contact form submitted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: error.message });
   }
 };
