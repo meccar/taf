@@ -4,10 +4,11 @@ const {
   validateEmail,
   validatePhone,
 } = require("../util/validator.js");
+const { Schema } = mongoose;
 
 class Contact {
   constructor() {
-    this.schema = new mongoose.Schema({
+    this.schema = new Schema({
       name: {
         type: String,
         required: [true, "Name is required"],

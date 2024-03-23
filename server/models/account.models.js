@@ -4,10 +4,11 @@ const {
   validateEmail,
   validatePassword,
 } = require("../util/validator.js");
+const { Schema } = mongoose;
 
 class Account {
   constructor() {
-    this.schema = new mongoose.Schema({
+    this.schema = new Schema({
       name: {
         type: String,
         required: [true, "Name is required"],

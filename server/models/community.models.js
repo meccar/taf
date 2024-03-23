@@ -14,17 +14,21 @@ class Community {
       },
       picture: {
         type: String,
+        default:
+          "https://tafviet.com/wp-content/uploads/2024/03/community-picture.jpg",
       },
       member: {
         type: Number,
+        default: 0,
       },
       online: {
         type: Number,
+        default: 0,
       },
     });
   }
 }
 
 const community = new Community();
-const CommunityModel = mongoose.model("communitys", community.schema);
+const CommunityModel = mongoose.model("communities", community.schema);
 module.exports = CommunityModel;
