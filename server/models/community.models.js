@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
-// const { Schema } = mongoose;
+const { Schema } = mongoose;
 
 class Community {
   constructor() {
-    this.schema = new mongoose.Schema({
+    this.schema = new Schema({
       name: {
         type: String,
         required: [true, "Community name is required"],

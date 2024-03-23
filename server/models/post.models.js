@@ -18,6 +18,10 @@ class Post {
       picture: {
         type: String,
       },
+      upvotes: {
+        type: Number,
+        default: 0,
+      },
       user_id: {
         type: ObjectId,
       },
