@@ -3,12 +3,7 @@ const Community = require("../models/community.models.js");
 exports.communityForm = async (req, res, next) => {
   try {
     const { name, description, picture, member, online } = req.body;
-
-    const community_id = await Community.findOne({ community_name });
-    // if (!community_id) {
-    //   return res.status(404).json({ message: "Invalid usrename" });
-    // }
-
+    console.log("after const");
     // Create a new contact instance
     const newCommunity = new Community({
       name: name,
@@ -17,6 +12,7 @@ exports.communityForm = async (req, res, next) => {
       member: member,
       online: online,
     });
+    console.log("after const newCommunity");
 
     // Save the contact to the database
     await newCommunity.save();
