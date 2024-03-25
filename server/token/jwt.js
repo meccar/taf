@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
-const cookie = require("cookie");
+// const cookie = require("cookie");
 
 // Load the private key
 const privateKey = fs.readFileSync(path.join(__dirname, "..", "priv.pem"));
@@ -15,7 +15,7 @@ const options = {
 };
 
 // Function to generate JWT token asynchronously
-async function generateToken() {
+async function generateToken(res) {
   try {
     // Generate JWT token asynchronously
     const token = await new Promise((resolve, reject) => {
@@ -28,15 +28,7 @@ async function generateToken() {
       });
     });
 
-    // Serialize the token into a cookie
-    const serializedToken = cookie.serialize("jwt", token, {
-      httpOnly: true,
-      secure: true,
-      domain: "qd4djl-3000.csb.app",
-      maxAge: options.expiresIn,
-    });
-
-    return serializedToken; // Return the serialized token
+    return token;
   } catch (error) {
     throw new Error("Failed to generate JWT token: " + error.message);
   }

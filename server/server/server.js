@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
 const verifyToken = require("../middleware/jwtAuth.js");
+const cookieParser = require("cookie-parser");
 
 const path = require("path");
 const fs = require("fs");
@@ -18,6 +19,7 @@ async function ConnectServer() {
     app.use(bodyParser.json());
     app.use(express.static("public"));
     app.use(express.json());
+    app.use(cookieParser());
 
     app.use("/api", apiRoutes);
 
