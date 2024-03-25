@@ -6,6 +6,7 @@ const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
 const verifyToken = require("../middleware/jwtAuth.js");
 const cookieParser = require("cookie-parser");
+// import * as cookieParser from "cookie-parser";
 
 const path = require("path");
 const fs = require("fs");

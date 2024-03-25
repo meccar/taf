@@ -1,5 +1,6 @@
 const Account = require("../models/account.models.js");
-const GenerateToken = require("../token/jwt.js");
+const generateToken = require("../token/jwt.js");
+const generateCookie = require("../token/jwt.js");
 const bcrypt = require("bcrypt");
 
 class AuthController {
@@ -18,14 +19,19 @@ class AuthController {
       }
 
       // Generate and set token in cookie
-      const token = await GenerateToken(req);
+      // const token = await GenerateToken(req);
+      await generateToken(req);
+      // await generateCookie(res, token);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: true,
-        domain: "qd4djl-3000.csb.app",
-        maxAge: 30 * 60 * 1000,
-      });
+      // await res.setHeader(
+      //   "token",
+      //   cookie.serialize("jwt", token, {
+      //     httpOnly: true,
+      //     secure: true,
+      //     domain: "qd4djl-3000.csb.app",
+      //     maxAge: 30 * 60 * 1000,
+      //   }),
+      // );
 
       // Respond with success message
       res.status(200).json({ message: "Login successful" });
