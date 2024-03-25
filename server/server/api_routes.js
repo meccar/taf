@@ -1,25 +1,25 @@
 const express = require("express");
 // const router = express.Router();
 const api = express.Router();
-const apiContact = require("../api/contact.api.js");
-const apiRegister = require("../api/register.api.js");
-const apiLogin = require("../api/login.api.js");
-const apiPost = require("../api/post.api.js");
-const apiCommunity = require("../api/community.api.js");
-const apiComment = require("../api/comment.api.js");
-const apiReply = require("../api/reply.api.js");
-const apiRule = require("../api/rule.api.js");
-const apiVerify_mail = require("../api/verify_mail.api.js");
+const ContactController = require("../api/contact.api.js");
+const RegisterController = require("../api/register.api.js");
+const LoginController = require("../api/login.api.js");
+const PostController = require("../api/post.api.js");
+const CommunityController = require("../api/community.api.js");
+const CommentController = require("../api/comment.api.js");
+const ReplyController = require("../api/reply.api.js");
+const RuleController = require("../api/rule.api.js");
+const VerifyMailController = require("../api/verify_mail.api.js");
 
 // Define routes
-api.post("/v1/contact", apiContact.contactForm);
-api.post("/v1/register", apiRegister.registerForm);
-api.post("/v1/login", apiLogin.loginForm);
-api.post("/v1/post", apiPost.postForm);
-api.post("/v1/community", apiCommunity.communityForm);
-api.post("/v1/comment", apiComment.commentForm);
-api.post("/v1/comment", apiReply.replyForm);
-api.post("/v1/rule", apiRule.ruleForm);
-api.post("/v1/verifymail", apiVerify_mail.verifyMailForm);
+api.post("/v1/contact", ContactController.contactForm);
+api.post("/v1/register", RegisterController.register);
+api.post("/v1/login", LoginController.login);
+api.post("/v1/post", PostController.CreatePost);
+api.post("/v1/community", CommunityController.CreateCommunity);
+api.post("/v1/comment", CommentController.comment);
+api.post("/v1/comment", ReplyController.reply);
+api.post("/v1/rule", RuleController.CreateRule);
+api.post("/v1/verifymail", VerifyMailController.verifyMail);
 
 module.exports = api;

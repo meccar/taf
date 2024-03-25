@@ -1,22 +1,26 @@
-const Verify_mail = require("../models/verify_mail.models.js");
+const VerifyMail = require("../models/verify_mail.models.js");
 
-exports.verifyMailForm = async (req, res, next) => {
-  try {
-    const { email, secret_code, is_used } = req.body;
+class VerifyMailController {
+  async verifyMail(req, res, next) {
+    try {
+      const { email, secret_code, is_used } = req.body;
 
-    // // Create a new contact instance
-    const newVerify_mail = new Verify_mail({
-      email: email,
-      secret_code: secret_code,
-      is_used: is_used,
-    });
+      // Create a new verify mail instance
+      const newVerifyMail = new VerifyMail({
+        email: email,
+        secret_code: secret_code,
+        is_used: is_used,
+      });
 
-    // Save the contact to the database
-    await newVerify_mail.save();
+      // Save the verify mail to the database
+      await newVerifyMail.save();
 
-    res.status(201).json({ message: "Mail verified successful" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
+      res.status(201).json({ message: "Mail verified successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
   }
-};
+}
+
+module.exports = new VerifyMailController();

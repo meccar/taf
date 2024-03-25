@@ -1,10 +1,11 @@
 const Account = require("../models/account.models.js");
-const generateToken = require("../token/jwt.js");
-const generateCookie = require("../token/jwt.js");
+const { generateToken, generateCookie } = require("../token/jwt.js");
+const makeRequest = require("../token/jwt.js");
+// const generateCookie = require("../token/jwt.js");
 const bcrypt = require("bcrypt");
 
-class AuthController {
-  async loginForm(req, res, next) {
+class LoginController {
+  async login(req, res, next) {
     try {
       const { email, password } = req.body;
 
@@ -19,9 +20,9 @@ class AuthController {
       }
 
       // Generate and set token in cookie
-      // const token = await GenerateToken(req);
-      await generateToken(req);
-      // await generateCookie(res, token);
+      const token = await generateToken();
+      // await generateToken(req);
+      await generateCookie(req, res, token);
 
       // await res.setHeader(
       //   "token",
@@ -42,4 +43,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController();
+module.exports = new LoginController();

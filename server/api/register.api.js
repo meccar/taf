@@ -1,25 +1,28 @@
 const Account = require("../models/account.models.js");
 const bcrypt = require("bcrypt");
 
-exports.registerForm = async (req, res, next) => {
-  try {
-    const { name, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 12);
-    console.log(hashedPassword);
+class RegisterController {
+  async register(req, res, next) {
+    try {
+      const { name, email, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 12);
 
-    // // Create a new contact instance
-    const newAccount = new Account({
-      name: name,
-      email: email,
-      password: hashedPassword,
-    });
+      // Create a new account instance
+      const newAccount = new Account({
+        name: name,
+        email: email,
+        password: hashedPassword,
+      });
 
-    // Save the contact to the database
-    await newAccount.save();
+      // Save the account to the database
+      await newAccount.save();
 
-    res.status(201).json({ message: "Registration successful" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
+      res.status(201).json({ message: "Registration successful" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
   }
-};
+}
+
+module.exports = new RegisterController();
