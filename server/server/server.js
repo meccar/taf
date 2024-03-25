@@ -4,6 +4,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
+const verifyToken = require("../middleware/jwtAuth.js");
+
 const path = require("path");
 const fs = require("fs");
 
@@ -18,7 +20,8 @@ async function ConnectServer() {
     app.use(express.json());
 
     app.use("/api", apiRoutes);
-    app.use("/user", protectedRoutes);
+
+    app.use("/user", verifyToken, protectedRoutes);
 
     app.use(function (err, req, res, next) {
       res.status(422).send({ error: err.message });
