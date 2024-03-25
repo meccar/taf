@@ -4,8 +4,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
+const path = require("path");
+const fs = require("fs");
 
-const port = process.env.PORT;
+// const port = process.env.PORT;
+const port = fs.readFileSync(path.join(__dirname, "..", "port.pem"), "utf8");
 
 async function ConnectServer() {
   try {
