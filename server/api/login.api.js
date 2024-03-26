@@ -1,7 +1,6 @@
 const Account = require("../models/account.models.js");
 const { generateToken, generateCookie } = require("../token/jwt.js");
-const makeRequest = require("../token/jwt.js");
-// const generateCookie = require("../token/jwt.js");
+const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
 const bcrypt = require("bcrypt");
 
 class LoginController {
@@ -20,19 +19,13 @@ class LoginController {
       }
 
       // Generate and set token in cookie
-      const token = await generateToken();
-      // await generateToken(req);
-      await generateCookie(req, res, token);
+      const jwt = await generateToken();
+      await generateCookie(req, res, jwt);
 
-      // await res.setHeader(
-      //   "token",
-      //   cookie.serialize("jwt", token, {
-      //     httpOnly: true,
-      //     secure: true,
-      //     domain: "qd4djl-3000.csb.app",
-      //     maxAge: 30 * 60 * 1000,
-      //   }),
-      // );
+      const paseto = await GeneratePaseto();
+      console.log(paseto);
+      const encryptedPayload = await EncryptPayload();
+      console.log(encryptedPayload);
 
       // Respond with success message
       res.status(200).json({ message: "Login successful" });

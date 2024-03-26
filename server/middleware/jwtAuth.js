@@ -7,7 +7,7 @@ const publicKey = fs.readFileSync(path.join(__dirname, "..", "pub.pem"));
 
 function verifyToken(req, res, next) {
   // getJwtFromHeader(req);
-  const token = req.header("Authorization");
+  const token = req.header("Cookie").replace("jwt=", "");
   if (!token) return res.status(401).json({ error: "Access denied" });
   try {
     // Verify the token using the public key and additional options
@@ -15,9 +15,9 @@ function verifyToken(req, res, next) {
       token,
       publicKey,
       {
-        algorithms: ["RS256"],
-        audience: "urn:https://qd4djl-3000.csb.app",
-        issuer: "urn:https://qd4djl-3000.csb.app",
+        algorithm: "RS256",
+        issuer: "y43qh6-3000.csb.app",
+        audience: "y43qh6-3000.csb.app",
       },
       (err, decoded) => {
         if (err) {
