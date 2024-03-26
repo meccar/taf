@@ -2,17 +2,19 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+
+const Config = require("../config/config.js");
 const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
 const verifyToken = require("../middleware/jwtAuth.js");
-const cookieParser = require("cookie-parser");
-// import * as cookieParser from "cookie-parser";
+const { VerifyPaseto, DecryptPayload } = require("../middleware/pasetoAuth.js");
 
 const path = require("path");
 const fs = require("fs");
 
 // const port = process.env.PORT;
-const port = fs.readFileSync(path.join(__dirname, "..", "port.pem"), "utf8");
+const port = Config.port;
 
 async function ConnectServer() {
   try {

@@ -14,7 +14,7 @@ class Account {
         required: [true, "Name is required"],
         validate: {
           validator: validateName,
-          message: "Name must be between 3 and 35 characters",
+          error: "Name must be between 3 and 35 characters",
         },
       },
       email: {
@@ -22,7 +22,7 @@ class Account {
         required: [true, "Email is required"],
         validate: {
           validator: validateEmail,
-          message: "Please enter a valid email",
+          error: "Please enter a valid email",
         },
         unique: true,
       },
@@ -31,7 +31,7 @@ class Account {
         required: [true, "Password is required"],
         validate: {
           validator: validatePassword,
-          message: "Please enter a valid Password",
+          error: "Please enter a valid Password",
         },
       },
       message: { type: String },

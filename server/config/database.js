@@ -1,19 +1,14 @@
 const mongoose = require("mongoose");
-const path = require("path");
-const fs = require("fs");
-require("dotenv").config({ path: "../.env" });
 
-var dbUser = process.env.MONGODB_USER;
-var dbPassword = process.env.MONGODB_PASSWORD;
-var dbName = process.env.MONGODB_NAME;
+const Config = require("../config/config.js");
 
-var password = fs.readFileSync(
-  path.join(__dirname, "..", "mongodb_p.pem"),
-  "utf8",
-);
-let db = fs.readFileSync(path.join(__dirname, "..", "mongodb.pem"), "utf8");
-db = db.replace("<password>", password);
-// const uri = `mongodb+srv://${dbUser}:${dbPassword}@${dbName}.ubmfujh.mongodb.net/?retryWrites=true&w=majority&appName=mongodb`;
+// require("dotenv").config({ path: "../app.env" });
+// var dbUser = process.env.MONGODB_USER;
+// var dbPassword = process.env.MONGODB_PASSWORD;
+// var dbName = process.env.MONGODB_NAME;
+
+let db = Config.db;
+db = db.replace("<password>", Config.db_password);
 const uri = db;
 
 async function ConnectDB() {

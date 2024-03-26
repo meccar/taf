@@ -1,19 +1,35 @@
 const { V3 } = require("paseto");
-const path = require("path");
-const fs = require("fs");
 
-const secretkey = fs.readFileSync(path.join(__dirname, "..", "secr.pem"));
-const publicKey = fs.readFileSync(path.join(__dirname, "..", "pub.pem"));
+const Config = require("../config/config.js");
 
-async function VerifyPaseto() {
+const secretkey = Config.secretkey;
+const publicKey = Config.publicKey;
+
+async function VerifyPaseto(req, res, next) {
+  const token = req.header("Cookie").replace("token=", "");
+  if (!token) return res.status(401).json({ error: "Access denied" });
   try {
-    await V3.verify(token, publicKey, {
-      audience: "urn:y43qh6-3000.csb.app:client",
-      issuer: "y43qh6-3000.csb.app",
-      clockTolerance: "1 min",
-    });
+    await V3.verify(
+      token,
+      publicKey,
+      {
+        audience: "urn:y43qh6-3000.csb.app:client",
+        issuer: "y43qh6-3000.csb.app",
+        clockTolerance: "1 min",
+      },
+      (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ error: "Invalid token" });
+        }
+
+        // Capture the decoded payload
+        req.userId = decoded.userId;
+        next();
+      },
+    );
+    next();
   } catch (error) {
-    throw new Error("Failed to decrypt token: " + error.message);
+    res.status(401).json({ error: "Invalid token" });
   }
 }
 

@@ -3,12 +3,12 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
+const Config = require("../config/config.js");
+
 // const secret = fs.readFileSync(path.join(__dirname, "..", "secret_key.pem"));
 
 const secretkey = crypto.randomBytes(32);
-const privateKey = fs.readFileSync(
-  path.join(__dirname, "..", "private_key.pem"),
-);
+const privateKey = Config.privateKey;
 
 const payload = {
   "urn:example:claim": "foo",

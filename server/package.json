@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node app.js",
     "dev": "nodemon ./server/app.js",
     "linux": "export $(cat app.env) && nodemon ./server/app.js",

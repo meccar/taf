@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
-const path = require("path");
-const fs = require("fs");
+
+const Config = require("../config/config.js");
 
 // Load the public key
-const publicKey = fs.readFileSync(path.join(__dirname, "..", "pub.pem"));
+const publicKey = Config.publicKey;
 
 function verifyToken(req, res, next) {
   // getJwtFromHeader(req);
-  const token = req.header("Cookie").replace("jwt=", "");
+  const token = req.header("Cookie").replace("token=", "");
   if (!token) return res.status(401).json({ error: "Access denied" });
   try {
     // Verify the token using the public key and additional options

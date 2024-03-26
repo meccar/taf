@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
-const path = require("path");
-const fs = require("fs");
+
 const cookie = require("cookie");
+
+const Config = require("../config/config.js");
 
 const header = {
   alg: "RS256", // Example algorithm (use the one you need)
@@ -9,12 +10,12 @@ const header = {
 };
 
 // Load the private key
-const privateKey = fs.readFileSync(path.join(__dirname, "..", "priv.pem"));
+const privateKey = Config.privateKey;
 
 // Define JWT options
 const payload = {
   algorithm: "RS256", // Algorithm used for signing
-  expiresIn: 30 * 60, // Expiration time (30 minutes in this example)
+  expiresIn: 60 * 60 * 5, // Expiration time in seconds
   issuer: "y43qh6-3000.csb.app", // Issuer of the token
   audience: "y43qh6-3000.csb.app", // Audience of the token
 };
@@ -48,12 +49,12 @@ async function generateCookie(req, res, token) {
       secure: true,
       domain: "y43qh6-3000.csb.app",
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 60 * 60 * 5,
     };
     // await res.setHeader("Bearer", cookie.serialize(token));
     await res.setHeader("Authorization", `Bearer ${token}`);
 
-    res.cookie("jwt", token, cookieOptions);
+    await res.cookie("token", token, cookieOptions);
   } catch (error) {
     console.error("Failed to generate cookie:", error);
     throw error;

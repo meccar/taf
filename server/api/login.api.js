@@ -10,28 +10,28 @@ class LoginController {
 
       const user = await Account.findOne({ email });
       if (!user) {
-        return res.status(404).json({ message: "Invalid username" });
+        return res.status(404).json({ error: "Authentication failed" });
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Generate and set token in cookie
       const jwt = await generateToken();
       await generateCookie(req, res, jwt);
 
-      const paseto = await GeneratePaseto();
-      console.log(paseto);
+      // const paseto = await GeneratePaseto();
+      // await generateCookie(req, res, paseto);
+
       const encryptedPayload = await EncryptPayload();
-      console.log(encryptedPayload);
 
       // Respond with success message
       res.status(200).json({ message: "Login successful" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Login failed: " + error.message });
+      res.status(500).json({ error: "Login failed: " + error.message });
     }
   }
 }
