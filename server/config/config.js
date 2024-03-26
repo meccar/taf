@@ -19,16 +19,3 @@ function readPemFile(filePath) {
 }
 
 module.exports = Config;
-
-// exports.Config = () => {
-//   return {
-//     privateKey: fs.readFileSync(path.join(__dirname, "..", "priv.pem")),
-//     publicKey: fs.readFileSync(path.join(__dirname, "..", "pub.pem")),
-//     port: fs.readFileSync(path.join(__dirname, "..", "port.pem"), "utf8"),
-//     password: fs.readFileSync(
-//       path.join(__dirname, "..", "mongodb_p.pem"),
-//       "utf8",
-//     ),
-//     db: fs.readFileSync(path.join(__dirname, "..", "mongodb.pem"), "utf8"),
-//   };
-// };

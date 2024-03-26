@@ -3,62 +3,78 @@ const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 
 const Config = require("../config/config.js");
-
-const header = {
-  alg: "RS256", // Example algorithm (use the one you need)
-  typ: "JWT", // Example token type
-};
-
-// Load the private key
-const privateKey = Config.privateKey;
-
-// Define JWT options
-const payload = {
-  algorithm: "RS256", // Algorithm used for signing
-  expiresIn: 60 * 60 * 5, // Expiration time in seconds
-  issuer: "y43qh6-3000.csb.app", // Issuer of the token
-  audience: "y43qh6-3000.csb.app", // Audience of the token
-};
+const { header, payload } = require("../config/jwtConfig.js");
 
 // Function to generate JWT token asynchronously
-async function generateToken() {
-  try {
-    // Generate JWT token asynchronously
-    const token = await new Promise((resolve, reject) => {
-      jwt.sign(header, privateKey, payload, (err, token) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+class JWT {
+  async generateToken() {
+    try {
+      // Generate JWT token asynchronously
+      const token = await new Promise((resolve, reject) => {
+        jwt.sign(header, Config.privateKey, payload, (err, token) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-        resolve(token);
+          resolve(token);
+        });
       });
-    });
 
-    // await generateCookie(res, token);
-    return token;
-  } catch (error) {
-    throw new Error("Failed to generate JWT token: " + error.message);
+      return token;
+    } catch (error) {
+      throw new Error("Failed to generate JWT token: " + error.message);
+    }
+  }
+
+  async generateCookie(req, res, token) {
+    try {
+      const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+        domain: "y43qh6-3000.csb.app",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 5,
+      };
+      // await res.setHeader("Bearer", cookie.serialize(token));
+      await res.setHeader("Authorization", `Bearer ${token}`);
+
+      await res.cookie("token", token, cookieOptions);
+    } catch (error) {
+      console.error("Failed to generate cookie:", error);
+      throw error;
+    }
+  }
+
+  async verifyToken(req, res, next) {
+    // Get the authorization header
+    const authHeader = req.header("Cookie");
+
+    // Check if authorization header exists
+    if (typeof authHeader !== "undefined") {
+      // Split the header into two parts: Bearer and the token
+      const tokenParts = authHeader.split("=");
+      if (tokenParts.length === 2 && tokenParts[0] === "token") {
+        // Extract and verify the token
+        const token = tokenParts[1];
+        jwt.verify(token, Config.publicKey, (err, decodedToken) => {
+          if (err) {
+            // Token is not valid
+            res.status(401).json({ error: "Invalid token" });
+          } else {
+            // Token is valid, set the decoded token in the request object
+            req.decodedToken = decodedToken;
+            next(); // Proceed to the next middleware
+          }
+        });
+      } else {
+        // Invalid authorization header format
+        res.status(401).json({ error: "Invalid token" });
+      }
+    } else {
+      // Authorization header is missing
+      res.status(401).json({ error: "Access denied" });
+    }
   }
 }
-
-async function generateCookie(req, res, token) {
-  try {
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      domain: "y43qh6-3000.csb.app",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 5,
-    };
-    // await res.setHeader("Bearer", cookie.serialize(token));
-    await res.setHeader("Authorization", `Bearer ${token}`);
-
-    await res.cookie("token", token, cookieOptions);
-  } catch (error) {
-    console.error("Failed to generate cookie:", error);
-    throw error;
-  }
-}
-
-module.exports = { generateToken, generateCookie };
+module.exports = new JWT();

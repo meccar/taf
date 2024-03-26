@@ -7,7 +7,8 @@ const cookieParser = require("cookie-parser");
 const Config = require("../config/config.js");
 const apiRoutes = require("./api_routes.js");
 const protectedRoutes = require("./protected_routes.js");
-const verifyToken = require("../middleware/jwtAuth.js");
+const JWT = require("../token/jwt.js");
+
 const { VerifyPaseto, DecryptPayload } = require("../middleware/pasetoAuth.js");
 
 const path = require("path");
@@ -26,7 +27,7 @@ async function ConnectServer() {
 
     app.use("/api", apiRoutes);
 
-    app.use("/user", verifyToken, protectedRoutes);
+    app.use("/user", JWT.verifyToken, protectedRoutes);
 
     app.use(function (err, req, res, next) {
       res.status(422).send({ error: err.message });

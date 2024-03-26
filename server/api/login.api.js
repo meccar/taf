@@ -1,5 +1,5 @@
 const Account = require("../models/account.models.js");
-const { generateToken, generateCookie } = require("../token/jwt.js");
+const JWT = require("../token/jwt.js");
 const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
 const bcrypt = require("bcrypt");
 
@@ -19,8 +19,8 @@ class LoginController {
       }
 
       // Generate and set token in cookie
-      const jwt = await generateToken();
-      await generateCookie(req, res, jwt);
+      const jwt = await JWT.generateToken();
+      await JWT.generateCookie(req, res, jwt);
 
       // const paseto = await GeneratePaseto();
       // await generateCookie(req, res, paseto);
