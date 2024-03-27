@@ -23,10 +23,12 @@ class UserController {
       // Save the account to the database
       await newAccount.save();
 
-      res.status(201).json({ message: "Registration successful" });
+      return res
+        .status(201)
+        .json({ message: "Verification email sent successful" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   }
 
@@ -40,8 +42,7 @@ class UserController {
       }
 
       const is_email_verified = await Account.findOne({ email });
-      console.log(!is_email_verified);
-      if (!is_email_verified) {
+      if (is_email_verified) {
         return res.status(404).json({ error: "Account has not authorized" });
       }
 
@@ -61,7 +62,7 @@ class UserController {
       await JWT.generateCookie(req, res, accessToken);
 
       // Send the refresh token in the response body
-      res.status(200).json({ accessToken, refreshToken });
+      return res.status(200).json({ accessToken, refreshToken });
 
       // const paseto = await GeneratePaseto();
       // await generateCookie(req, res, paseto);
@@ -71,8 +72,7 @@ class UserController {
       // Respond with success message
       // res.status(200).json({ message: "Login successful" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Login failed: " + error.message });
+      return res.status(500).json({ error: "Login failed: " + error.message });
     }
   }
 
@@ -80,10 +80,9 @@ class UserController {
     try {
       // Clear cookie
       res.clearCookie("token");
-      res.status(200).json({ message: "Logout successful" });
+      return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Logout failed: " + error.message });
+      return res.status(500).json({ error: "Logout failed: " + error.message });
     }
   }
 }

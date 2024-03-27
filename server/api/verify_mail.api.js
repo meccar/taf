@@ -8,7 +8,7 @@ class VerifyMailController {
   async sendMail(req, res, email) {
     try {
       const secret_code = crypto.randomBytes(32).toString("hex");
-      const verifyLink = `https://y43qh6-3000.csb.app/verify?email=${email}&secret_code=${secret_code}`;
+      const verifyLink = `https://y43qh6-3000.csb.app/api/verifymail/${email}/${secret_code}`;
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -28,10 +28,9 @@ class VerifyMailController {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.log(error);
-          res.status(500).send("Error sending verification email.");
+          return res.status(500).send("Error sending verification email.");
         } else {
           console.log("Email sent: " + info.response);
-          res.send("Verification email sent.");
         }
       });
 
@@ -39,14 +38,38 @@ class VerifyMailController {
       const newVerifyMail = new VerifyMail({
         email: email,
         secret_code: secret_code,
-        // is_used: is_used,
       });
 
       // Save the verify mail to the database
       await newVerifyMail.save();
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  async verifyMail(req, res) {
+    try {
+      const email = await Verify_mail.findOne(req.params.email);
+      const secret_code = await Verify_mail.findOne(req.params.secret_code);
+
+      if (!email && !secret_code) {
+        return res.status(404).json({ error: "Account is not authorized" });
+      }
+
+      VerifyMail = {
+        is_used: true,
+      };
+
+      Account = {
+        is_email_verified: true,
+      };
+
+      await VerifyMail.save();
+      await Account.save();
+
+      return res.status(201).send("Account registered successfully");
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   }
 }

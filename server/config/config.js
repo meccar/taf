@@ -5,7 +5,7 @@ require("dotenv").config({ path: "./app.env" });
 const Config = {
   privateKey: readPemFile(path.join(__dirname, "..", "priv.pem")),
   publicKey: readPemFile(path.join(__dirname, "..", "pub.pem")),
-  port: readPemFile(path.join(__dirname, "..", "port.pem")),
+  port: process.env.PORT,
   db_password: process.env.MONGODB_PASSWORD,
   db: process.env.MONGODB,
   mail: process.env.EMAIL_SENDER_ADDRESS,
