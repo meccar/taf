@@ -21,6 +21,6 @@ api.post("/v1/community", CommunityController.CreateCommunity);
 api.post("/v1/comment", CommentController.comment);
 api.post("/v1/comment", ReplyController.reply);
 api.post("/v1/rule", RuleController.CreateRule);
-api.post("/v1/verifymail", VerifyMailController.verifyMail);
+api.post("/v1/sendMail", VerifyMailController.sendMail);
 
 module.exports = api;

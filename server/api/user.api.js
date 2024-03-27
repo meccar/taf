@@ -1,13 +1,17 @@
+const bcrypt = require("bcrypt");
+
 const Account = require("../models/account.models.js");
 const JWT = require("../token/jwt.js");
 const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
-const bcrypt = require("bcrypt");
+const VerifyMailController = require("../api/verify_mail.api.js");
 
 class UserController {
   async register(req, res) {
     try {
       const { name, email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 12);
+
+      await VerifyMailController.sendMail(req, res, email);
 
       // Create a new account instance
       const newAccount = new Account({
@@ -33,6 +37,12 @@ class UserController {
       const user = await Account.findOne({ email });
       if (!user) {
         return res.status(404).json({ error: "Authentication failed" });
+      }
+
+      const is_email_verified = await Account.findOne({ email });
+      console.log(!is_email_verified);
+      if (!is_email_verified) {
+        return res.status(404).json({ error: "Account has not authorized" });
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);

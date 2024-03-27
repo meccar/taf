@@ -29,6 +29,7 @@ async function ConnectServer() {
       next();
     });
     app.use(cors({ origin: "*" }));
+    app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(express.static("public"));
     app.use(express.json());

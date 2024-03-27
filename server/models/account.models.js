@@ -26,6 +26,10 @@ class Account {
         },
         unique: true,
       },
+      is_email_verified: {
+        type: Boolean,
+        default: false,
+      },
       password: {
         type: String,
         required: [true, "Password is required"],

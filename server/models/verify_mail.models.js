@@ -8,10 +8,10 @@ class Verify_mail {
   constructor() {
     this.schema = new Schema({
       email: {
-        type: ObjectId,
+        type: String,
       },
       secret_code: {
-        type: ObjectId,
+        type: String,
       },
       is_used: {
         type: Boolean,
