@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
-const {
-  Schema,
-  Types: { ObjectId },
-} = mongoose;
+const { Schema } = mongoose;
 
-class Verify_mail {
+class VerifyMail {
   constructor() {
     this.schema = new Schema({
       email: {
@@ -19,7 +16,9 @@ class Verify_mail {
       },
       expires_at: {
         type: Date,
-        default: Date.now + 15 * 60,
+        default: function () {
+          return new Date(Date.now() + 15 * 60 * 1000);
+        },
       },
       timestamp: {
         type: Date,
@@ -29,6 +28,6 @@ class Verify_mail {
   }
 }
 
-const verify_mail = new Verify_mail();
-const Verify_mailModel = mongoose.model("verify_mail", verify_mail.schema);
+const verify_mail = new VerifyMail();
+const Verify_mailModel = mongoose.model("verify_mails", verify_mail.schema);
 module.exports = Verify_mailModel;

@@ -1,10 +1,9 @@
 const bcrypt = require("bcrypt");
-const { now } = require("date-fns");
 
 const Account = require("../models/account.models.js");
 const JWT = require("../token/jwt.js");
 const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
-const VerifyMailController = require("../api/verify_mail.api.js");
+const VerifyMailController = require("./verify_mail.api.js");
 
 class UserController {
   async register(req, res) {
@@ -16,19 +15,20 @@ class UserController {
       if (existingAccount) {
         if (existingAccount.is_email_verified) {
           return res.status(400).json({ error: "Account already exists" });
-        } else {
-          if (now > existingAccount.expires_at) {
-            this.sendMail(req, res, existingAccount.email);
-            return res.status(400).json({
-              error:
-                "Verification code expired. Please check your email for the latest one.",
-            });
-          }
+        } else if (!existingAccount.is_email_verified) {
           return res.status(400).json({
             error: "Verification email was sent, please check your email",
           });
         }
       }
+
+      // if (!existingAccount.is_email_verified) {
+      //   return res
+      //     .status(400)
+      //     .json({
+      //       error: "Verification email was sent, please check your email",
+      //     });
+      // }
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -63,7 +63,7 @@ class UserController {
       }
 
       const is_email_verified = await Account.findOne({ email });
-      if (is_email_verified) {
+      if (!is_email_verified) {
         return res.status(404).json({ error: "Account has not authorized" });
       }
 
