@@ -27,6 +27,24 @@ class JWT {
     }
   }
 
+  async generateTokens() {
+    try {
+      const accessToken = await this.generateToken(
+        header,
+        Config.privateKey,
+        payload,
+      );
+      const refreshToken = await this.generateToken(
+        header,
+        Config.privateKey,
+        payload,
+      );
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new Error("Failed to generate JWT tokens: " + error.message);
+    }
+  }
+
   async generateCookie(req, res, token) {
     try {
       const cookieOptions = {
@@ -37,7 +55,7 @@ class JWT {
         maxAge: 60 * 60 * 5,
       };
       // await res.setHeader("Bearer", cookie.serialize(token));
-      await res.setHeader("Authorization", `Bearer ${token}`);
+      // await res.header("Authorization", `Bearer ${token}`);
 
       await res.cookie("token", token, cookieOptions);
     } catch (error) {
@@ -74,6 +92,24 @@ class JWT {
     } else {
       // Authorization header is missing
       res.status(401).json({ error: "Access denied" });
+    }
+  }
+
+  async decodeToken(token) {
+    try {
+      const payload = await new Promise((resolve, reject) => {
+        jwt.decode(token, Config.publicKey, (err, payload) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          resolve(payload);
+        });
+      });
+      return payload;
+    } catch (error) {
+      throw new Error("Failed to decode token: " + error.message);
     }
   }
 }

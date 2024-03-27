@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
 const Config = require("../config/config.js");
 const apiRoutes = require("./api_routes.js");
@@ -19,6 +20,14 @@ const port = Config.port;
 
 async function ConnectServer() {
   try {
+    app.use(helmet());
+    app.use((req, res, next) => {
+      res.setHeader(
+        "Content-Security-Policy",
+        "script-src 'self' https://y43qh6-3000.csb.app; img-src 'self' https://y43qh6-3000.csb.app; style-src 'self' https://y43qh6-3000.csb.app",
+      );
+      next();
+    });
     app.use(cors({ origin: "*" }));
     app.use(bodyParser.json());
     app.use(express.static("public"));
