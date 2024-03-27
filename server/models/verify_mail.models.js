@@ -17,6 +17,14 @@ class Verify_mail {
         type: Boolean,
         default: false,
       },
+      expires_at: {
+        type: Date,
+        default: Date.now + 15 * 60,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now, // Set timestamp on creation
+      },
     });
   }
 }

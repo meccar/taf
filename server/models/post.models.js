@@ -28,6 +28,10 @@ class Post {
       community_id: {
         type: ObjectId,
       },
+      timestamp: {
+        type: Date,
+        default: Date.now, // Set timestamp on creation
+      },
     });
   }
 }

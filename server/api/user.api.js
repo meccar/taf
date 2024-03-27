@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const { now } = require("date-fns");
 
 const Account = require("../models/account.models.js");
 const JWT = require("../token/jwt.js");
@@ -9,6 +10,26 @@ class UserController {
   async register(req, res) {
     try {
       const { name, email, password } = req.body;
+
+      const existingAccount = await Account.findOne({ email });
+
+      if (existingAccount) {
+        if (existingAccount.is_email_verified) {
+          return res.status(400).json({ error: "Account already exists" });
+        } else {
+          if (now > existingAccount.expires_at) {
+            this.sendMail(req, res, existingAccount.email);
+            return res.status(400).json({
+              error:
+                "Verification code expired. Please check your email for the latest one.",
+            });
+          }
+          return res.status(400).json({
+            error: "Verification email was sent, please check your email",
+          });
+        }
+      }
+
       const hashedPassword = await bcrypt.hash(password, 12);
 
       await VerifyMailController.sendMail(req, res, email);
@@ -24,7 +45,7 @@ class UserController {
       await newAccount.save();
 
       return res
-        .status(201)
+        .status(202)
         .json({ message: "Verification email sent successful" });
     } catch (error) {
       console.error(error);

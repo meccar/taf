@@ -18,6 +18,10 @@ class Rule {
         type: String,
         required: [true, "Description is required"],
       },
+      timestamp: {
+        type: Date,
+        default: Date.now, // Set timestamp on creation
+      },
     });
   }
 }

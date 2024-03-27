@@ -21,6 +21,10 @@ class Reply {
         type: Number,
         default: 0,
       },
+      timestamp: {
+        type: Date,
+        default: Date.now, // Set timestamp on creation
+      },
     });
   }
 }

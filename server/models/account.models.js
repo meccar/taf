@@ -39,6 +39,10 @@ class Account {
         },
       },
       message: { type: String },
+      timestamp: {
+        type: Date,
+        default: Date.now, // Set timestamp on creation
+      },
     });
   }
 }

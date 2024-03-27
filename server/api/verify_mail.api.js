@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const Config = require("../config/config.js");
 
+const Config = require("../config/config.js");
 const VerifyMail = require("../models/verify_mail.models.js");
 
 class VerifyMailController {
@@ -49,25 +49,31 @@ class VerifyMailController {
 
   async verifyMail(req, res) {
     try {
-      const email = await Verify_mail.findOne(req.params.email);
-      const secret_code = await Verify_mail.findOne(req.params.secret_code);
+      const verification = await Verify_mail.findOne({
+        email: req.params.email,
+        secret_code: req.params.secret_code,
+      });
 
-      if (!email && !secret_code) {
-        return res.status(404).json({ error: "Account is not authorized" });
+      if (!verification) {
+        return res.status(404).json({ error: "Invalid verification details" });
       }
 
-      VerifyMail = {
-        is_used: true,
-      };
+      // Check if verification has already been used
+      if (verification.is_used) {
+        return res.status(400).json({ error: "Account already registered" });
+      }
 
-      Account = {
-        is_email_verified: true,
-      };
+      verification.is_used = true;
+      await verification.save();
 
-      await VerifyMail.save();
-      await Account.save();
+      // Find the associated account using the email from verification
+      const account = await Account.findOne({ email: verification.email });
 
-      return res.status(201).send("Account registered successfully");
+      // Update the account's email verification status
+      account.is_email_verified = true;
+      await account.save();
+
+      return res.status(200).send("Account registered successfully");
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
