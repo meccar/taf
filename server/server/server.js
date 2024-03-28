@@ -12,10 +12,6 @@ const JWT = require("../token/jwt.js");
 
 const { VerifyPaseto, DecryptPayload } = require("../middleware/pasetoAuth.js");
 
-const path = require("path");
-const fs = require("fs");
-
-// const port = process.env.PORT;
 const port = Config.port;
 
 async function ConnectServer() {
@@ -42,7 +38,7 @@ async function ConnectServer() {
     app.use(function (err, req, res, next) {
       res.status(422).send({ error: err.message });
     });
-    app.listen(port, () => {
+    app.listen(port, "127.0.0.1", () => {
       console.log(`Server is running on port ${port}`);
     });
   } catch (error) {

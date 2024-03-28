@@ -35,21 +35,14 @@ class VerifyMailController {
         }
       });
 
-      console.log("<<< After sendMail");
-
       // Create a new verify mail instance
       const newVerifyMail = new VerifyMail({
         email: email,
         secret_code: secret_code,
       });
-      console.log("<<< newVerifyMail", newVerifyMail);
-
-      console.log("<<< After newVerifyMail");
 
       // Save the verify mail to the database
       await newVerifyMail.save();
-
-      console.log("<<< After newVerifyMail save");
     } catch (error) {
       return error;
     }
@@ -61,9 +54,6 @@ class VerifyMailController {
         email: req.params.email,
         secret_code: req.params.secret_code,
       });
-      console.log(verification);
-      console.log(req.params.email);
-      console.log(req.params.secret_code);
 
       if (Date.now() > verification.expires_at) {
         this.sendMail(req, res, verification.email);

@@ -14,21 +14,13 @@ class UserController {
 
       if (existingAccount) {
         if (existingAccount.is_email_verified) {
-          return res.status(400).json({ error: "Account already exists" });
+          return res.status(409).json({ error: "Account already exists" });
         } else if (!existingAccount.is_email_verified) {
           return res.status(400).json({
             error: "Verification email was sent, please check your email",
           });
         }
       }
-
-      // if (!existingAccount.is_email_verified) {
-      //   return res
-      //     .status(400)
-      //     .json({
-      //       error: "Verification email was sent, please check your email",
-      //     });
-      // }
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -59,22 +51,18 @@ class UserController {
 
       const user = await Account.findOne({ email });
       if (!user) {
-        return res.status(404).json({ error: "Authentication failed" });
+        return res.status(401).json({ error: "Invalid credentials" });
       }
 
       const is_email_verified = await Account.findOne({ email });
       if (!is_email_verified) {
-        return res.status(404).json({ error: "Account has not authorized" });
+        return res.status(403).json({ error: "Account has not authorized" });
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-
-      // Generate and set token in cookie
-      // const jwt = await JWT.generateToken();
-      // await JWT.generateCookie(req, res, jwt);
 
       // // Generate access and refresh tokens
       const { accessToken, refreshToken } = await JWT.generateTokens();
