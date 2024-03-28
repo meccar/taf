@@ -35,9 +35,11 @@ async function ConnectServer() {
 
     app.use("/user", JWT.verifyToken, protectedRoutes);
 
-    app.use(function (err, req, res, next) {
-      res.status(422).send({ error: err.message });
+    app.use((err, req, res, next) => {
+      console.error(err.stack);
+      res.status(500).send("Internal Server Error");
     });
+
     app.listen(port, "127.0.0.1", () => {
       console.log(`Server is running on port ${port}`);
     });

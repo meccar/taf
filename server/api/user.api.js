@@ -70,6 +70,8 @@ class UserController {
       // // Set the access token as a cookie
       await JWT.generateCookie(req, res, accessToken);
 
+      await res.setHeader("Authorization", `Bearer ${accessToken}`);
+
       // Send the refresh token in the response body
       return res.status(200).json({ accessToken, refreshToken });
 
