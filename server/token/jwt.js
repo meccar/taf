@@ -55,7 +55,7 @@ class JWT {
         maxAge: 60 * 60 * 5,
       };
       // await res.setHeader("Bearer", cookie.serialize(token));
-      // await res.header("Authorization", `Bearer ${token}`);
+      await res.header("Authorization", `Bearer ${token}`);
 
       await res.cookie("token", token, cookieOptions);
     } catch (error) {
@@ -66,13 +66,13 @@ class JWT {
 
   async verifyToken(req, res, next) {
     // Get the authorization header
-    const authHeader = req.header("Cookie");
+    const authHeader = req.header("Authorization");
 
     // Check if authorization header exists
     if (typeof authHeader !== "undefined") {
       // Split the header into two parts: Bearer and the token
-      const tokenParts = authHeader.split("=");
-      if (tokenParts.length === 2 && tokenParts[0] === "token") {
+      const tokenParts = authHeader.split(" ");
+      if (tokenParts.length === 2 && tokenParts[0] === "Bearer") {
         // Extract and verify the token
         const token = tokenParts[1];
         jwt.verify(token, Config.publicKey, (err, decodedToken) => {
