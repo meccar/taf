@@ -20,7 +20,7 @@ async function ConnectServer() {
     app.use((req, res, next) => {
       res.setHeader(
         "Content-Security-Policy",
-        "script-src 'self' https://y43qh6-3000.csb.app; img-src 'self' https://y43qh6-3000.csb.app; style-src 'self' https://y43qh6-3000.csb.app",
+        // "script-src 'self' https://y43qh6-3000.csb.app; img-src 'self' https://y43qh6-3000.csb.app; style-src 'self' https://y43qh6-3000.csb.app",
       );
       next();
     });
