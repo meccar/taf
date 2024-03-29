@@ -17,12 +17,6 @@ const port = Config.port;
 
 async function ConnectServer() {
   try {
-    const corsOptions = {
-      origin: true, //included origin as true
-      credentials: true, //included credentials as true
-    };
-
-    app.use(cors(corsOptions));
     app.use(helmet());
     app.use((req, res, next) => {
       res.header("Access-Control-Allow-Origin", req.headers.origin);
