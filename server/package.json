@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "serve": "node app.js",
-    "dev": "nodemon ./server/app.js",
+    "server": "nodemon ./server/app.js",
     "linux": "export $(cat app.env) && nodemon ./server/app.js",
     "win": "set MONGODB_USER=tung14hn && set MONGODB_PASSWORD=Fj2on41PODnlGR7H && set MONGODB_NAME=mongodb && set PORT=3000 && nodemon ./server/app.js"
   },

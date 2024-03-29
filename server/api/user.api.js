@@ -64,6 +64,8 @@ class UserController {
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
+      delete user.password;
+
       // // Generate access and refresh tokens
       const { accessToken, refreshToken } = await JWT.generateTokens();
 

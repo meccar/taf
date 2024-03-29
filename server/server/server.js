@@ -40,7 +40,7 @@ async function ConnectServer() {
       res.status(500).send("Internal Server Error");
     });
 
-    app.listen(port, "127.0.0.1", () => {
+    app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   } catch (error) {

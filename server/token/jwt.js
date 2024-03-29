@@ -53,6 +53,8 @@ class JWT {
         domain: "y43qh6-3000.csb.app",
         sameSite: "lax",
         maxAge: 60 * 60 * 5,
+        path: "/",
+        expires: new Date(Date.now() + 60 * 60 * 5),
       };
       // await res.setHeader("Bearer", cookie.serialize(token));
 
@@ -65,13 +67,14 @@ class JWT {
 
   async verifyToken(req, res, next) {
     // Get the authorization header
-    const authHeader = req.header("Cookie");
+    const authHeader = req.headers["authorization"];
+    console.log(req.headers["authorization"]);
 
     // Check if authorization header exists
     if (typeof authHeader !== "undefined") {
       // Split the header into two parts: Bearer and the token
-      const tokenParts = authHeader.split("=");
-      if (tokenParts.length === 2 && tokenParts[0] === "token") {
+      const tokenParts = authHeader.split(" ");
+      if (tokenParts.length === 2 && tokenParts[0] === "Bearer") {
         // Extract and verify the token
         const token = tokenParts[1];
         jwt.verify(token, Config.publicKey, (err, decodedToken) => {
