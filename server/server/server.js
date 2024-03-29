@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
+const session = require("express-session");
 
 const Config = require("../config/config.js");
 const apiRoutes = require("./api_routes.js");
@@ -16,15 +17,22 @@ const port = Config.port;
 
 async function ConnectServer() {
   try {
+    const corsOptions = {
+      origin: true, //included origin as true
+      credentials: true, //included credentials as true
+    };
+
+    app.use(cors(corsOptions));
     app.use(helmet());
     app.use((req, res, next) => {
-      res.setHeader(
-        "Content-Security-Policy",
-        // "script-src 'self' https://y43qh6-3000.csb.app; img-src 'self' https://y43qh6-3000.csb.app; style-src 'self' https://y43qh6-3000.csb.app",
-      );
+      res.header("Access-Control-Allow-Origin", req.headers.origin);
+      res.header("Access-Control-Allow-Headers", "*");
+      res.header("Access-Control-Allow-Credentials", true);
+      res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
       next();
     });
-    app.use(cors({ origin: "*" }));
+
+    app.use(cors({ origin: "*", credentials: true }));
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.use(express.static("public"));

@@ -4,6 +4,7 @@ const Account = require("../models/account.models.js");
 const JWT = require("../token/jwt.js");
 const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
 const VerifyMailController = require("./verify_mail.api.js");
+// const cookie = require("cookie");
 
 class UserController {
   async register(req, res) {
@@ -75,7 +76,6 @@ class UserController {
       await res.setHeader("Authorization", `Bearer ${accessToken}`);
 
       // Send the refresh token in the response body
-      return res.status(200).json({ accessToken, refreshToken });
 
       // const paseto = await GeneratePaseto();
       // await generateCookie(req, res, paseto);
@@ -83,7 +83,9 @@ class UserController {
       // const encryptedPayload = await EncryptPayload();
 
       // Respond with success message
-      // res.status(200).json({ message: "Login successful" });
+
+      return res.status(200).json({ accessToken, refreshToken });
+      // return res.status(200).json({ message: "Login successful" });
     } catch (error) {
       return res.status(500).json({ error: "Login failed: " + error.message });
     }
