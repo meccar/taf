@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-logo font-normal scroll-smooth;
+  }
+
+  body {
+    @apply px-2 bg-background text-white text-sm overflow-hidden;
+  }
+
+  h2 {
+    @apply uppercase text-text-secondary;
+  }
+
+  h3 {
+    @apply text-text-neutral font-medium;
+  }
+
+  h4 {
+    @apply font-bold text-lg;
+  }
+
+  img {
+    @apply max-w-none;
+  }
+
+  select {
+    @apply bg-background-dark p-3 w-52;
+  }
+
+  option {
+    @apply p-3 w-52;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.6rem;
+    border-radius: 10rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #04090a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #1a282d;
+    border-radius: 10rem;
+  }
+}
