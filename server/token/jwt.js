@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
+const cookieParser = require("cookie-parser");
 
 const Config = require("../config/config.js");
 const { header, payload } = require("../config/jwtConfig.js");
@@ -43,28 +45,29 @@ class JWT {
     }
   }
 
-  // async generateCookie(req, res, token) {
-  //   try {
-  //     const cookieOptions = {
-  //       httpOnly: false,
-  //       // secure: true,
-  //       sameSite: "strict",
-  //       path: "/",
-  //       expires: new Date(Date.now() + 99999999999),
-  //     };
+  async generateCookie(req, res, token) {
+    try {
+      const cookieOptions = {
+        httpOnly: false,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        expires: new Date(Date.now() + 99999999999),
+      };
 
-  //     // await res.setHeader("Bearer", cookie.serialize(token));
+      // await res.setHeader("Bearer", cookie.serialize(token));
 
-  //     await res.cookie("token", token, cookieOptions);
-  //   } catch (error) {
-  //     console.error("Failed to generate cookie:", error);
-  //     throw error;
-  //   }
-  // }
+      await res.cookie("token", token, cookieOptions);
+    } catch (error) {
+      console.error("Failed to generate cookie:", error);
+      throw error;
+    }
+  }
 
   async verifyToken(req, res, next) {
     // Get the authorization header
     const authHeader = req.headers["authorization"];
+    // console.log(req.cookies.token);
 
     // Check if authorization header exists
     if (typeof authHeader !== "undefined") {
