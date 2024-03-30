@@ -4,7 +4,7 @@
   "description": "none",
   "main": "index.js",
   "scripts": {
-    "test": "cd ./server && npm run test && exit 1",
+    "test": "cd ./server && npm run test",
     "dev": "concurrently \"cd ./client && npm run client\" \"cd ./server && npm run server\""
   },
   "author": "",
