@@ -1,9 +1,5 @@
 const validator = require("validator");
 
-function validateName(value) {
-  return validator.isLength(value, { min: 3, max: 35 });
-}
-
 function validateEmail(value) {
   return validator.isEmail(value);
 }
@@ -30,7 +26,6 @@ function validatePassword(value) {
 }
 
 module.exports = {
-  validateName,
   validateEmail,
   validatePhone,
   validatePassword,

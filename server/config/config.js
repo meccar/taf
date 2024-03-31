@@ -10,6 +10,7 @@ const Config = {
   db: process.env.MONGODB,
   mail: process.env.EMAIL_SENDER_ADDRESS,
   mail_password: process.env.EMAIL_SENDER_PASSWORD,
+  node_env: process.env.NODE_ENV,
 };
 
 function readPemFile(filePath) {
