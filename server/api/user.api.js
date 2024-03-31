@@ -13,14 +13,14 @@ class UserController {
 
       const existingAccount = await Account.findOne({ email });
 
-      if (existingAccount) {
-        if (existingAccount.is_email_verified) {
-          return res.status(409).json({ error: "Account already exists" });
-        } else if (!existingAccount.is_email_verified) {
-          return res.status(400).json({
-            error: "Verification email was sent, please check your email",
-          });
-        }
+      if (existingAccount && existingAccount.is_email_verified) {
+        return res.status(409).json({ error: "Account already exists" });
+      }
+
+      if (existingAccount && !existingAccount.is_email_verified) {
+        return res.status(400).json({
+          error: "Verification email was sent, please check your email",
+        });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -52,17 +52,17 @@ class UserController {
 
       const user = await Account.findOne({ email });
       if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
 
       const is_email_verified = await Account.findOne({ email });
       if (!is_email_verified) {
-        return res.status(403).json({ error: "Account has not authorized" });
+        return res.status(403).json({ message: "Account has not authorized" });
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ error: "Invalid credentials" });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
 
       delete user.password;
@@ -87,7 +87,9 @@ class UserController {
       return res.status(200).json({ accessToken, refreshToken });
       // return res.status(200).json({ message: "Login successful" });
     } catch (error) {
-      return res.status(500).json({ error: "Login failed: " + error.message });
+      return res
+        .status(500)
+        .json({ message: "Login failed: " + error.message });
     }
   }
 
@@ -97,7 +99,9 @@ class UserController {
       res.clearCookie("token");
       return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
-      return res.status(500).json({ error: "Logout failed: " + error.message });
+      return res
+        .status(500)
+        .json({ message: "Logout failed: " + error.message });
     }
   }
 }
