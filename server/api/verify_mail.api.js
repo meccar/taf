@@ -64,12 +64,14 @@ class VerifyMailController {
       }
 
       if (!verification) {
-        return res.status(404).json({ error: "Invalid verification details" });
+        return res
+          .status(404)
+          .json({ message: "Invalid verification details" });
       }
 
       // Check if verification has already been used
       if (verification.is_used) {
-        return res.status(400).json({ error: "Account already registered" });
+        return res.status(400).json({ message: "Account already registered" });
       }
 
       verification.is_used = true;
