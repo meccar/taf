@@ -1,30 +1,29 @@
 const mongoose = require("mongoose");
-const {
-  validateName,
-  validateEmail,
-  validatePassword,
-} = require("../util/validator.js");
+const { validateEmail, validatePassword } = require("../util/validator.js");
 const { Schema } = mongoose;
 
 class Account {
   constructor() {
     this.schema = new Schema({
-      name: {
+      username: {
         type: String,
         required: [true, "Name is required"],
-        validate: {
-          validator: validateName,
-          message: "Name must be between 3 and 35 characters",
-        },
+        minlength: [4, "Name must be at least 4 characters long"],
+        maxlength: [35, "Name cannot exceed 35 characters"],
+        match: [
+          /^[a-zA-Z0-9_]+$/,
+          "Username can only contain letters, numbers, and underscores",
+        ],
       },
       email: {
         type: String,
+        unique: true,
+        lowercase: true,
         required: [true, "Email is required"],
         validate: {
           validator: validateEmail,
           message: "Please enter a valid email",
         },
-        unique: true,
       },
       is_email_verified: {
         type: Boolean,
@@ -33,12 +32,13 @@ class Account {
       password: {
         type: String,
         required: [true, "Password is required"],
+        minlength: [8, "Password must be at least 8 characters long"],
         validate: {
           validator: validatePassword,
           message: "Please enter a valid Password",
         },
       },
-      message: { type: String },
+      message: String,
       timestamp: {
         type: Date,
         default: Date.now, // Set timestamp on creation

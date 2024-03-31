@@ -9,7 +9,7 @@ const VerifyMailController = require("./verify_mail.api.js");
 class UserController {
   async register(req, res) {
     try {
-      const { name, email, password } = req.body;
+      const { username, email, password } = req.body;
 
       const existingAccount = await Account.findOne({ email });
 
@@ -29,7 +29,7 @@ class UserController {
 
       // Create a new account instance
       const newAccount = new Account({
-        name: name,
+        username: username,
         email: email,
         password: hashedPassword,
       });
@@ -48,9 +48,12 @@ class UserController {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const { username, email, password } = req.body;
 
-      const user = await Account.findOne({ email });
+      const user = await Account.findOne({
+        $or: [{ email }, { username }],
+      });
+
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
       }

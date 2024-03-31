@@ -49,7 +49,7 @@ class JWT {
     try {
       const cookieOptions = {
         httpOnly: false,
-        secure: true,
+        secure: Config.node_env === "production",
         sameSite: "lax",
         path: "/",
         expires: new Date(Date.now() + 99999999999),
