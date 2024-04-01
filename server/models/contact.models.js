@@ -12,10 +12,8 @@ class Contact {
       name: {
         type: String,
         required: [true, "Name is required"],
-        validate: {
-          validator: validateName,
-          message: "Name must be between 3 and 35 characters",
-        },
+        minlength: [4, "Name must be at least 4 characters long"],
+        maxlength: [35, "Name cannot exceed 35 characters"],
       },
       email: {
         type: String,
