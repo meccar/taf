@@ -10,6 +10,7 @@ class Post {
       title: {
         type: String,
         required: [true, "Title is required"],
+        unique: true,
       },
       text: {
         type: String,

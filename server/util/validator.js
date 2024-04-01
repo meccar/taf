@@ -1,5 +1,9 @@
 const validator = require("validator");
 
+function validateTitle(value) {
+  return value.replace(/[^a-zA-Z0-9\s\-.]/g, '');
+}
+
 function validateEmail(value) {
   return validator.isEmail(value);
 }
@@ -26,6 +30,7 @@ function validatePassword(value) {
 }
 
 module.exports = {
+  validateTitle,
   validateEmail,
   validatePhone,
   validatePassword,

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+
 class Community {
   constructor() {
     this.schema = new Schema({

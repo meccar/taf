@@ -5,8 +5,8 @@ const Comment = require("../models/comment.models.js");
 class CommentController {
   async comment(req, res) {
     try {
-      const { text } = req.body;
-      const { post_id } = req.params.post_id
+      const { text, post_id } = req.body;
+      // const { post_id } = req.params.post_id
 
       const [decoded] = await Promise.all([
         JWT.decodedToken(req.cookies.token)
@@ -22,17 +22,17 @@ class CommentController {
       // Save the comment to the database
       await newComment.save();
 
-      res.status(201).json({ message: "Comment successful" });
+      res.status(201).json({ status: "success", message: "Comment successful" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ status: "fail", message: error.message });
     }
   }
 
-  async getComment(post_id) {
+  async getCommentByPost(post_id) {
     try{
       const comments = await Promise.all([
-        Comment.findOne(post_id),
+        Comment.findOne({ post_id: post_id }),
       ]);
       return comments  
     } catch(error) {

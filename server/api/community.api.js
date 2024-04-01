@@ -1,3 +1,4 @@
+
 const Community = require("../models/community.models.js");
 
 class CommunityController {

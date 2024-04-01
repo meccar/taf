@@ -43,17 +43,29 @@ class PostController {
     try {
       const posts = await Post.find(); // Fetch all posts
   
-      const postData = posts.map(async post => {
+      const postData = await Promise.all(posts.map(async post => {
         // For each post, fetch the corresponding community
         const community = await CommunityController.GetCommunityByID(post.community_id);
+        const comments = await CommentController.getCommentByPost(post._id);
   
-        return {        
+        // Fetch replies for each comment
+        const commentsReplies = await Promise.all(comments.map(async comment => {
+          if (!comment) {
+            return null; // Return null if comment is null
+          }
+
+          const replies = await ReplyController.getReplyByComment(comment._id);
+          return { ...comment.toJSON(), replies };
+        }));
+  
+        return {
           title: post.title,
           text: post.text,
           picture: post.picture,
-          Community: community
+          Community: community,
+          Comments: commentsReplies,
         };
-      });
+      }));
   
       const postDetails = await Promise.all(postData); // Wait for all community queries to finish
   
@@ -79,6 +91,19 @@ class PostController {
       return res.status(200).json({ status: "success", data: { post }});
     }catch (error) {
       return res.status(500).json({ status: "fail", message: error.message });
+    }
+  }
+
+  async getPostID(title) {
+    try {
+      const post = await Post.findOne({ title: title }); // Find post by title
+      if (post) {
+        return post._id; // Return the _id of the found post
+      } else {
+        return null; // Return null if post is not found
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
