@@ -1,48 +1,43 @@
 const bcrypt = require("bcrypt");
-
 const Account = require("../models/account.models.js");
 const JWT = require("../token/jwt.js");
 const { GeneratePaseto, EncryptPayload } = require("../token/paseto.js");
 const VerifyMailController = require("./verify_mail.api.js");
-// const cookie = require("cookie");
 
 class UserController {
   async register(req, res) {
     try {
       const { username, email, password } = req.body;
 
-      const existingAccount = await Account.findOne({ email });
+      // Check if account exists and email is verified concurrently
+      const [existingAccount, isEmailVerified] = await Promise.all([
+        Account.findOne({ email }),
+        Account.findOne({ email }).lean().then((account) => account?.is_email_verified),
+      ]);
 
-      if (existingAccount && existingAccount.is_email_verified) {
-        return res.status(409).json({ error: "Account already exists" });
+      if (existingAccount && isEmailVerified) {
+        return res.status(409).json({ status: "fail", message: "Account already exists" });
       }
 
-      if (existingAccount && !existingAccount.is_email_verified) {
-        return res.status(400).json({
-          error: "Verification email was sent, please check your email",
-        });
+      if (existingAccount && !isEmailVerified) {
+        return res.status(400).json({ status: "fail", message: "Verification email was sent, please check your email" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      await VerifyMailController.sendMail(req, res, email);
+      // Send verification email and create new account concurrently
+      await Promise.all([
+        VerifyMailController.sendMail(req, res, email),
+        new Promise((resolve, reject) => {
+          const newAccount = new Account({ username, email, password: hashedPassword });
+          newAccount.save().then(resolve).catch(reject);
+        }),
+      ]);
 
-      // Create a new account instance
-      const newAccount = new Account({
-        username: username,
-        email: email,
-        password: hashedPassword,
-      });
-
-      // Save the account to the database
-      await newAccount.save();
-
-      return res
-        .status(202)
-        .json({ message: "Verification email sent successful" });
+      return res.status(202).json({ status: "success", message: "Verification email sent successful" });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ status: "fail", message: error.message });
     }
   }
 
@@ -50,61 +45,53 @@ class UserController {
     try {
       const { username, email, password } = req.body;
 
-      const user = Account.findOne({
-        $or: [{ email }, { username }],
-      });
+      // Find the user by email or username, check if the email is verified, and verify the password concurrently
+      const [user, isEmailVerified, passwordMatch] = await Promise.all([
+        new Promise((resolve, reject) => {
+          Account.findOne({ $or: [{ email }, { username }] })
+            .then(resolve)
+            .catch(reject);
+        }),
+
+        new Promise((resolve, reject) => {
+          Account.findOne({ email }).lean().then((account) => {
+            resolve(account?.is_email_verified);
+          }).catch(reject);
+        }),
+
+        bcrypt.compare(password, (await Account.findOne({ $or: [{ email }, { username }] }))?.password || ''),
+      ]);
 
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ status: "fail", message: "Invalid credentials" });
       }
 
-      const is_email_verified = Account.findOne({ email });
-      if (!is_email_verified) {
-        return res.status(403).json({ message: "Account has not authorized" });
+      if (!isEmailVerified) {
+        return res.status(403).json({ status: "fail", message: "Account has not authorized" });
       }
 
-      const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ status: "fail", message: "Password is incorrect" });
       }
 
       delete user.password;
 
-      // // Generate access and refresh tokens
-      const { accessToken, refreshToken } = await JWT.generateTokens();
-
-      // // Set the access token as a cookie
+      const { accessToken, refreshToken } = await JWT.generateTokens(user._id);
       await JWT.generateCookie(req, res, accessToken);
-
       await res.setHeader("Authorization", `Bearer ${accessToken}`);
 
-      // Send the refresh token in the response body
-
-      // const paseto = await GeneratePaseto();
-      // await generateCookie(req, res, paseto);
-
-      // const encryptedPayload = await EncryptPayload();
-
-      // Respond with success message
-
-      return res.status(200).json({ accessToken, refreshToken });
-      // return res.status(200).json({ message: "Login successful" });
+      return res.status(200).json({ status: "success", data: { accessToken, refreshToken } });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Login failed: " + error.message });
+      return res.status(500).json({ status: "fail", message: "Login failed: " + error.message });
     }
   }
 
   async logout(req, res) {
     try {
-      // Clear cookie
       res.clearCookie("token");
-      return res.status(200).json({ message: "Logout successful" });
+      return res.status(200).json({ status: "success", message: "Logout successful" });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Logout failed: " + error.message });
+      return res.status(500).json({ status: "fail", message: "Logout failed: " + error.message });
     }
   }
 }

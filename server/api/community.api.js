@@ -17,10 +17,10 @@ class CommunityController {
       // Save the community to the database
       await newCommunity.save();
 
-      res.status(201).json({ message: "Community created successfully" });
+      res.status(201).json({ status: "success", message: "Community created successfully" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ status: "fail", message: error.message });
     }
   }
 }

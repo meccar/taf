@@ -5,6 +5,11 @@ class PostController {
     try {
       const { title, text, picture, upvotes, user_id, community_id } = req.body;
 
+      const [existingAccount, isEmailVerified] = await Promise.all([
+        Account.findOne({ email }),
+        Account.findOne({ email }).lean().then((account) => account?.is_email_verified),
+      ]);
+      
       // Create a new post instance
       const newPost = new Post({
         title: title,
@@ -18,12 +23,36 @@ class PostController {
       // Save the post to the database
       await newPost.save();
 
-      res.status(201).json({ message: "Post created successfully" });
+      return res.status(201).json({ status: "success", message: "Post created successfully", data: { newPost } });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ status: "fail", message: error.message });
     }
   }
+
+  async GetAllPost(req, res, next) {
+    try{
+      const [posts] = await Promise.all([
+        Post.find(),
+      ]);
+      return res.status(200).json({ status: "success", length: posts.length, data: { posts }});
+    }catch (error) {
+      return res.status(500).json({ status: "fail", message: error.message });
+    }
+  }
+
+  async GetPost(req, res, next) {
+    try{
+      const post = await Post.findById(req.params.id);
+
+      if (!post){
+        return res.status(404).json({ status: "fail", message: "Post not founded" });
+      }
+      return res.status(200).json({ status: "success", data: { post }});
+    }catch (error) {
+      return res.status(500).json({ status: "fail", message: error.message });
+    }
+  }
+
 }
 
 module.exports = new PostController();
