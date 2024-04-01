@@ -30,6 +30,7 @@ api
 
 api
     .route("/v1/post")
+    .get(PostController.GetAllPost)
     .post(PostController.CreatePost);
 
 api
