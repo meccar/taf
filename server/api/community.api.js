@@ -1,17 +1,13 @@
 const Community = require("../models/community.models.js");
 
 class CommunityController {
-  async CreateCommunity(req, res, next) {
+  async CreateCommunity(req, res) {
     try {
-      const { name, description, picture, member, online } = req.body;
+      const { name } = req.body;
 
       // Create a new community instance
       const newCommunity = new Community({
         name: name,
-        description: description,
-        picture: picture,
-        member: member,
-        online: online,
       });
 
       // Save the community to the database

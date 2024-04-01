@@ -1,15 +1,19 @@
 const Post = require("../models/post.models.js");
 
 class PostController {
-  async CreatePost(req, res, next) {
+  async CreatePost(req, res) {
     try {
-      const { title, text, picture, upvotes, user_id, community_id } = req.body;
+      const { title, text, picture, upvotes, community_name } = req.body;
 
-      const [existingAccount, isEmailVerified] = await Promise.all([
-        Account.findOne({ email }),
-        Account.findOne({ email }).lean().then((account) => account?.is_email_verified),
+      const [user_id, community_id] = await Promise.all([
+        decodedToken(req.cookies.token),
+        Community.findOne({ community_name }).lean().then((community) => community?._id),
       ]);
-      
+
+      if(!community_id){
+        community_id = CreateCommunity(community_name);
+      }
+
       // Create a new post instance
       const newPost = new Post({
         title: title,

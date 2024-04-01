@@ -52,29 +52,38 @@ class JWT {
 
       await res.cookie("token", token, cookieOptions);
     } catch (error) {
-      console.error("Failed to generate cookie:", error);
       throw error;
     }
   }
 
   async verifyToken(req, res, next) {
-    // Get the token from the cookie
-    const token = req.cookies.token;
+    try {
+      // Get the token from the cookie
+      const token = req.cookies.token;
   
-    if (token) {
-      jwt.verify(token, Config.privateKey, (err, decodedToken) => {
-        if (err) {
-          // Token is not valid
-          res.status(401).json({ error: "Invalid token" });
-        } else {
-          // Token is valid, set the decoded token in the request object
-          req.decodedToken = decodedToken;
-          next(); // Proceed to the next middleware
-        }
-      });
-    } else {
-      // Token is missing
-      res.status(401).json({ error: "Access denied" });
+      if (!token) {
+        // Token is missing, throw specific error
+        throw new Error("Access denied");
+      }
+  
+      // Verify the token
+      const decodedToken = await jwt.verify(token, Config.privateKey);
+  
+      // Token is valid, set decoded data and proceed
+      req.decodedToken = decodedToken;
+      next();
+    } catch (error) {
+      throw new Error("Can't verify user");
+    }
+  }
+
+  async decodedToken(token) {
+    try {
+      // Decode the token and return the payload (consider using verification with secret key for better security)
+      const decoded = jwt.decode(token);
+      return decoded;
+    } catch (error) {
+      throw new Error("Can't verify user");
     }
   }
 
