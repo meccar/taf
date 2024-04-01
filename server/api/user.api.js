@@ -50,7 +50,7 @@ class UserController {
     try {
       const { username, email, password } = req.body;
 
-      const user = await Account.findOne({
+      const user = Account.findOne({
         $or: [{ email }, { username }],
       });
 
@@ -58,7 +58,7 @@ class UserController {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      const is_email_verified = await Account.findOne({ email });
+      const is_email_verified = Account.findOne({ email });
       if (!is_email_verified) {
         return res.status(403).json({ message: "Account has not authorized" });
       }
