@@ -5,21 +5,27 @@ class ContactController {
     try {
       const { name, email, phone, message } = req.body;
 
-      // Create a new contact instance
-      const newContact = new Contact({
-        name: name,
-        email: email,
-        phone: phone,
-        message: message,
-      });
+      // Create and save the new contact concurrently
+      const [createResult, saveResult] = await Promise.allSettled([
+        new Promise((resolve) => {
+          resolve(new Contact({ name, email, phone, message }));
+        }),
+        new Promise((resolve, reject) => {
+          const newContact = new Contact({ name, email, phone, message });
+          newContact.save().then(resolve).catch(reject);
+        }),
+      ]);
 
-      // Save the contact to the database
-      await newContact.save();
+      if (createResult.status === "rejected" || saveResult.status === "rejected") {
+        const error = createResult.reason || saveResult.reason;
+        console.error(error);
+        return res.status(500).json({ message: error.message });
+      }
 
-      res.status(201).json({ message: "Contact form submitted successfully" });
+      return res.status(201).json({ status:"sucesss", message: "Contact form submitted successfully", data: saveResult.value });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   }
 }

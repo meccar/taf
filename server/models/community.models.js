@@ -10,7 +10,7 @@ class Community {
       },
       description: {
         type: String,
-        required: [true, "Description is required"],
+        // required: [true, "Description is required"],
       },
       picture: {
         type: String,

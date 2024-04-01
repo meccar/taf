@@ -12,15 +12,48 @@ const RuleController = require("../api/rule.api.js");
 const VerifyMailController = require("../api/verify_mail.api.js");
 
 // Define routes
-api.post("/v1/contact", ContactController.contactForm);
-api.post("/v1/register", UserController.register);
-api.post("/v1/login", UserController.login);
-api.get("/v1/logout", UserController.logout);
-api.post("/v1/post", PostController.CreatePost);
-api.post("/v1/community", CommunityController.CreateCommunity);
-api.post("/v1/comment", CommentController.comment);
-api.post("/v1/comment", ReplyController.reply);
-api.post("/v1/rule", RuleController.CreateRule);
-api.get("/v1/verifymail/:email/:secret_code", VerifyMailController.verifyMail);
+api
+    .route("/v1/contact")
+    .post(ContactController.contactForm);
+
+api
+    .route("/v1/register")
+    .post( UserController.register);
+
+api
+    .route("/v1/login")
+    .post(UserController.login);
+
+api
+    .route("/v1/logout")
+    .get(UserController.logout);
+
+api
+    .route("/v1/post")
+    .post(PostController.CreatePost);
+
+api
+    .route("/v1/post/:id")
+    .post(PostController.GetPost);    
+
+api
+    .route("/v1/community")
+    .post(CommunityController.CreateCommunity);
+
+api
+    .route("/v1/comment")
+    .post( CommentController.comment);
+
+api
+    .route("/v1/reply")
+    .post(ReplyController.reply);
+
+api
+    .route("/v1/rule")
+    .post(RuleController.CreateRule);
+
+api
+    .route("/v1/verifymail/:email/:secret_code")
+    .get(VerifyMailController.verifyMail);
 
 module.exports = api;
