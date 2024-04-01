@@ -39,24 +39,70 @@ class PostController {
     }
   }
 
+  // async GetAllPost(req, res, next) {
+  //   try {
+  //     const posts = await Post.find(); // Fetch all posts
+  
+  //     const postDetails = await Promise.all(posts.map(async post => {
+  //       // For each post, fetch the corresponding community
+  //       const community = await CommunityController.GetCommunityByID(post.community_id);
+  //       const comments = await CommentController.getCommentByPost(post._id);
+  
+  //       // Fetch replies for each comment
+  //       const commentsDetails = await Promise.all(comments.map(async comment => {
+  //         if (!comment) {
+  //           return null; // Return null if comment is null
+  //         }
+
+  //         const Replies = await ReplyController.getReplyByComment(comment._id);
+  //         return { ...comment.toJSON(), Replies };
+  //       }));
+  
+  //       return {
+  //         id: post._id,
+  //         title: post.title,
+  //         text: post.text,
+  //         picture: post.picture,
+  //         Community: community,
+  //         Comments: commentsDetails,
+  //       };
+  //     }));
+  
+  //     // const postDetails = await Promise.all(postData);
+  
+  //     return res.status(200).json({ 
+  //       status: "success", 
+  //       length: postDetails.length, 
+  //       data: { 
+  //         Posts: postDetails
+  //       }
+  //     });
+
+  //   } catch (error) {
+  //     return res.status(500).json({ status: "fail", message: error.message });
+  //   }
+  // }
+  
   async GetAllPost(req, res, next) {
     try {
       const posts = await Post.find(); // Fetch all posts
   
-      const postDetails = await Promise.all(posts.map(async post => {
-        // For each post, fetch the corresponding community
-        const community = await CommunityController.GetCommunityByID(post.community_id);
-        const comments = await CommentController.getCommentByPost(post._id);
+      const postDetailsPromises = posts.map(async post => {
+        const [community, comments] = await Promise.all([
+          CommunityController.GetCommunityByID(post.community_id),
+          CommentController.getCommentByPost(post._id),
+        ]);
   
-        // Fetch replies for each comment
-        const commentsDetails = await Promise.all(comments.map(async comment => {
+        const commentsDetailsPromises = comments.map(async comment => {
           if (!comment) {
             return null; // Return null if comment is null
           }
-
-          const Replies = await ReplyController.getReplyByComment(comment._id);
-          return { ...comment.toJSON(), Replies };
-        }));
+  
+          const replies = await ReplyController.getReplyByComment(comment._id);
+          return { ...comment.toJSON(), Replies: replies };
+        });
+  
+        const commentsDetails = await Promise.all(commentsDetailsPromises);
   
         return {
           id: post._id,
@@ -66,18 +112,17 @@ class PostController {
           Community: community,
           Comments: commentsDetails,
         };
-      }));
+      });
   
-      // const postDetails = await Promise.all(postData);
+      const postDetails = await Promise.all(postDetailsPromises);
   
-      return res.status(200).json({ 
-        status: "success", 
-        length: postDetails.length, 
-        data: { 
+      return res.status(200).json({
+        status: "success",
+        length: postDetails.length,
+        data: {
           Posts: postDetails
         }
       });
-
     } catch (error) {
       return res.status(500).json({ status: "fail", message: error.message });
     }
