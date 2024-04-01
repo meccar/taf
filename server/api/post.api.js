@@ -1,26 +1,29 @@
+
+const Community = require("../models/community.models.js");
 const Post = require("../models/post.models.js");
+const JWT = require("../token/jwt.js");
 
 class PostController {
   async CreatePost(req, res) {
     try {
-      const { title, text, picture, upvotes, community_name } = req.body;
+      const { title, text, picture, community_name } = req.body;
 
-      const [user_id, community_id] = await Promise.all([
-        decodedToken(req.cookies.token),
-        Community.findOne({ community_name }).lean().then((community) => community?._id),
+      const [decoded, community_id] = await Promise.all([
+        JWT.decodedToken(req.cookies.token), // Assuming decodedToken verifies the token
+        Community.findOne({ name: community_name }).lean().then((community) => {
+          if (!community) {
+            return Community.create({ name: community_name }).then((newCommunity) => newCommunity._id);
+          }
+          return community?._id; // Return existing community _id
+        }),
       ]);
-
-      if(!community_id){
-        community_id = CreateCommunity(community_name);
-      }
 
       // Create a new post instance
       const newPost = new Post({
         title: title,
         text: text,
         picture: picture,
-        upvotes: upvotes,
-        user_id: user_id,
+        user_id: decoded.user_id,
         community_id: community_id,
       });
 
