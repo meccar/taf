@@ -2,6 +2,9 @@
 const Community = require("../models/community.models.js");
 const Post = require("../models/post.models.js");
 const JWT = require("../token/jwt.js");
+const CommentController = require("./comment.api.js");
+const ReplyController = require("./reply.api.js");
+const CommunityController = require("./community.api.js");
 
 class PostController {
   async CreatePost(req, res) {
@@ -37,12 +40,31 @@ class PostController {
   }
 
   async GetAllPost(req, res, next) {
-    try{
-      const [posts] = await Promise.all([
-        Post.find(),
-      ]);
-      return res.status(200).json({ status: "success", length: posts.length, data: { posts }});
-    }catch (error) {
+    try {
+      const posts = await Post.find(); // Fetch all posts
+  
+      const postData = posts.map(async post => {
+        // For each post, fetch the corresponding community
+        const community = await CommunityController.GetCommunityByID(post.community_id);
+  
+        return {        
+          title: post.title,
+          text: post.text,
+          picture: post.picture,
+          Community: community
+        };
+      });
+  
+      const postDetails = await Promise.all(postData); // Wait for all community queries to finish
+  
+      return res.status(200).json({ 
+        status: "success", 
+        length: postDetails.length, 
+        data: { 
+          Posts: postDetails
+        }
+      });
+    } catch (error) {
       return res.status(500).json({ status: "fail", message: error.message });
     }
   }

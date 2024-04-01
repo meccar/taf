@@ -19,6 +19,20 @@ class CommunityController {
       res.status(500).json({ status: "fail", message: error.message });
     }
   }
+
+  // async GetCommunity {
+    
+  // }
+  async GetCommunityByID(id) {
+    try{
+      const community = await Promise.all([
+        Community.findOne({_id: id}),
+      ]);
+      return community  
+    } catch(error) {
+      throw error
+    }
+  }
 }
 
 module.exports = new CommunityController();

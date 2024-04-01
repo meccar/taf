@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const postSchema = require("./post.models.js")
 
 class Community {
   constructor() {
@@ -17,6 +18,10 @@ class Community {
         default:
           "https://tafviet.com/wp-content/uploads/2024/03/community-picture.jpg",
       },
+      posts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'posts' // Reference to your Post model
+      }],
       member: {
         type: Number,
         default: 0,
