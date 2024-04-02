@@ -21,9 +21,6 @@ class CommunityController {
     }
   }
 
-  // async GetCommunity {
-    
-  // }
   async GetCommunityByID(id) {
     try{
       const community = await Promise.all([

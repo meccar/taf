@@ -44,7 +44,7 @@ class VerifyMailController {
       // Save the verify mail to the database
       await newVerifyMail.save();
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
