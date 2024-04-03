@@ -73,7 +73,7 @@ class JWT {
       req.decodedToken = decodedToken;
       next();
     } catch (error) {
-      return res.status(401).json({ message: "Failed to verify user" });
+      return res.status(200).json({ status:"fail", message: "Failed to verify user" });
     }
   }
 

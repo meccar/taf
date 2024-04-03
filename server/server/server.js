@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const session = require("express-session");
+const morgan = require("morgan");
 
 const Config = require("../config/config.js");
 const apiRoutes = require("./api_routes.js");
@@ -32,6 +33,8 @@ async function ConnectServer() {
     app.use(express.static("public"));
     app.use(express.json());
     app.use(cookieParser());
+
+    app.use(morgan("dev"));
 
     app.use("/api", apiRoutes);
 
