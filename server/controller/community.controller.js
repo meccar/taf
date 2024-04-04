@@ -1,5 +1,5 @@
-
-const Community = require("../models/community.models.js");
+/* eslint-disable no-useless-catch */
+const Community = require("../models/community.models");
 
 class CommunityController {
   async CreateCommunity(req, res) {
@@ -14,7 +14,9 @@ class CommunityController {
       // Save the community to the database
       await newCommunity.save();
 
-      res.status(201).json({ status: "success", message: "Community created successfully" });
+      res
+        .status(201)
+        .json({ status: "success", message: "Community created successfully" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });
@@ -22,13 +24,11 @@ class CommunityController {
   }
 
   async GetCommunityByID(id) {
-    try{
-      const community = await Promise.all([
-        Community.findOne({_id: id}),
-      ]);
-      return community  
-    } catch(error) {
-      throw error
+    try {
+      const community = await Promise.all([Community.findOne({ _id: id })]);
+      return community;
+    } catch (error) {
+      throw error;
     }
   }
 }

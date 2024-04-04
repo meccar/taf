@@ -1,6 +1,9 @@
-const JWT = require("../token/jwt.js");
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-useless-catch */
+/* eslint-disable camelcase */
+const JWT = require("../token/jwt");
 
-const Comment = require("../models/comment.models.js");
+const Comment = require("../models/comment.models");
 
 class CommentController {
   async comment(req, res) {
@@ -9,7 +12,7 @@ class CommentController {
       // const { post_id } = req.params.post_id
 
       const [decoded] = await Promise.all([
-        JWT.decodedToken(req.cookies.token)
+        JWT.decodedToken(req.cookies.token),
       ]);
 
       // Create a new comment instance
@@ -22,7 +25,9 @@ class CommentController {
       // Save the comment to the database
       await newComment.save();
 
-      res.status(201).json({ status: "success", message: "Comment successful" });
+      res
+        .status(201)
+        .json({ status: "success", message: "Comment successful" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });
@@ -30,13 +35,13 @@ class CommentController {
   }
 
   async getCommentByPost(post_id) {
-    try{
+    try {
       const comments = await Promise.all([
         Comment.findOne({ post_id: post_id }),
       ]);
-      return comments  
-    } catch(error) {
-      throw error
+      return comments;
+    } catch (error) {
+      throw error;
     }
   }
 }

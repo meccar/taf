@@ -1,15 +1,16 @@
+/* eslint-disable prettier/prettier */
+
 const express = require("express");
-// const router = express.Router();
+
 const api = express.Router();
-const ContactController = require("../api/contact.api.js");
-// const RegisterController = require("../api/register.api.js");
-const UserController = require("../api/user.api.js");
-const PostController = require("../api/post.api.js");
-const CommunityController = require("../api/community.api.js");
-const CommentController = require("../api/comment.api.js");
-const ReplyController = require("../api/reply.api.js");
-const RuleController = require("../api/rule.api.js");
-const VerifyMailController = require("../api/verify_mail.api.js");
+const ContactController = require("../controller/contact.controller");
+const UserController = require("../controller/user.controller");
+const PostController = require("../controller/post.controller");
+const CommunityController = require("../controller/community.controller");
+const CommentController = require("../controller/comment.controller");
+const ReplyController = require("../controller/reply.controller");
+const RuleController = require("../controller/rule.controller");
+const VerifyMailController = require("../controller/verify_mail.controller");
 
 // Define routes
 api

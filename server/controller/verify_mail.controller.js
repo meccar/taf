@@ -1,58 +1,48 @@
+/* eslint-disable prettier/prettier */
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
-const Config = require("../config/config.js");
-const Account = require("../models/account.models.js");
-const VerifyMail = require("../models/verify_mail.models.js");
+const Config = require("../config/config");
+const Account = require("../models/account.models");
+const VerifyMail = require("../models/verify_mail.models");
 
 class VerifyMailController {
-  async sendMail(req, res, email) {
-    try {
-      const secret_code = crypto.randomBytes(32).toString("hex");
-      const verifyLink = `https://y43qh6-3000.csb.app/api/v1/verifymail/${email}/${secret_code}`;
+async sendMail(req, res, email) {
+  const secretCode = crypto.randomBytes(32).toString("hex");
+  const verifyLink = `https://turbo-space-carnival-9jjggjqj7vxfqp6-3000.app.github.dev/api/v1/verifymail/${email}/${secretCode}`;
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: Config.mail,
-          pass: Config.mail_password,
-        },
-      });
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: Config.mail,
+      pass: Config.mail_password,
+    },
+  });
 
-      const mailOptions = {
-        from: Config.mail,
-        to: email,
-        subject: "Confirm your email address",
-        text: `Click on this link to verify your email: ${verifyLink}`,
-      };
+  const mailOptions = {
+    from: Config.mail,
+    to: email,
+    subject: "Confirm your email address",
+    text: `Click on this link to verify your email: ${verifyLink}`,
+  };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          return error;
-        } else {
-          console.log("Email sent: " + info.response);
-        }
-      });
+  await transporter.sendMail(mailOptions); // Await throws error on rejection
 
-      // Create a new verify mail instance
-      const newVerifyMail = new VerifyMail({
-        email: email,
-        secret_code: secret_code,
-      });
+  // Create a new verify mail instance
+  const newVerifyMail = new VerifyMail({
+    email: email,
+    secret_code: secretCode,
+  });
 
-      // Save the verify mail to the database
-      await newVerifyMail.save();
-    } catch (error) {
-      throw error;
-    }
-  }
+  // Save the verify mail to the database
+  await newVerifyMail.save();
+}
 
   async verifyMail(req, res) {
     try {
       const verification = await VerifyMail.findOne({
         email: req.params.email,
-        secret_code: req.params.secret_code,
+        secret_code: req.params.secretCode,
       });
 
       if (Date.now() > verification.expires_at) {
