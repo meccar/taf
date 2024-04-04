@@ -1,4 +1,5 @@
-const Contact = require("../models/contact.models.js");
+/* eslint-disable node/no-unsupported-features/es-builtins */
+const Contact = require("../models/contact.models");
 
 class ContactController {
   async contactForm(req, res, next) {
@@ -16,13 +17,20 @@ class ContactController {
         }),
       ]);
 
-      if (createResult.status === "rejected" || saveResult.status === "rejected") {
+      if (
+        createResult.status === "rejected" ||
+        saveResult.status === "rejected"
+      ) {
         const error = createResult.reason || saveResult.reason;
         console.error(error);
         return res.status(500).json({ message: error.message });
       }
 
-      return res.status(201).json({ status:"sucesss", message: "Contact form submitted successfully", data: saveResult.value });
+      return res.status(201).json({
+        status: "sucesss",
+        message: "Contact form submitted successfully",
+        data: saveResult.value,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: error.message });

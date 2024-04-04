@@ -2,6 +2,15 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config({ path: "./app.env" });
 
+function readPemFile(filePath) {
+  try {
+    return fs.readFileSync(filePath, "utf8");
+  } catch (error) {
+    console.error("Error reading PEM file:", filePath, error);
+    throw new Error("Failed to read configuration. Check PEM file paths.");
+  }
+}
+
 const Config = {
   privateKey: readPemFile(path.join(__dirname, "..", "priv.pem")),
   publicKey: readPemFile(path.join(__dirname, "..", "pub.pem")),
@@ -12,14 +21,5 @@ const Config = {
   mail_password: process.env.EMAIL_SENDER_PASSWORD,
   node_env: process.env.NODE_ENV,
 };
-
-function readPemFile(filePath) {
-  try {
-    return fs.readFileSync(filePath, "utf8");
-  } catch (error) {
-    console.error("Error reading PEM file:", filePath, error);
-    throw new Error("Failed to read configuration. Check PEM file paths.");
-  }
-}
 
 module.exports = Config;
