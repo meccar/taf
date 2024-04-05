@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 const mongoose = require("mongoose");
+
 const {
   Schema,
   Types: { ObjectId },
@@ -15,6 +17,7 @@ class Reply {
       },
       text: {
         type: String,
+        trim: true,
         required: true,
       },
       upvotes: {

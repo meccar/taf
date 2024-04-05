@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 const mongoose = require("mongoose");
+
 const {
   Schema,
   Types: { ObjectId },
@@ -16,6 +18,7 @@ class Comment {
       text: {
         type: String,
         required: true,
+        trim: true,
       },
       upvotes: {
         type: Number,
@@ -23,7 +26,7 @@ class Comment {
       },
       timestamp: {
         type: Date,
-        default: Date.now, // Set timestamp on creation
+        default: Date.now,
       },
     });
   }

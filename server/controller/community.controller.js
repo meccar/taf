@@ -7,16 +7,13 @@ class CommunityController {
       const { name } = req.body;
 
       // Create a new community instance
-      const newCommunity = new Community({
-        name: name,
+      const newCommunity = await Community.create({ name: name });
+
+      res.status(201).json({
+        status: "success",
+        message: "Community created successfully",
+        data: newCommunity,
       });
-
-      // Save the community to the database
-      await newCommunity.save();
-
-      res
-        .status(201)
-        .json({ status: "success", message: "Community created successfully" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });

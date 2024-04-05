@@ -1,4 +1,7 @@
+/* eslint-disable camelcase */
+/* eslint-disable prettier/prettier */
 const mongoose = require("mongoose");
+
 const { Schema } = mongoose;
 
 class VerifyMail {
@@ -6,6 +9,7 @@ class VerifyMail {
     this.schema = new Schema({
       email: {
         type: String,
+        trim: true,
       },
       secret_code: {
         type: String,

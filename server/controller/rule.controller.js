@@ -8,18 +8,15 @@ class RuleController {
       const { communityId, title, description } = req.body;
 
       // Create a new rule instance
-      const newRule = new Rule({
+      const newRule = await Rule.create({
         community_id: communityId,
         title: title,
         description: description,
       });
 
-      // Save the rule to the database
-      await newRule.save();
-
       res
         .status(201)
-        .json({ status: "success", message: "Rule created successfully" });
+        .json({ status: "success", message: "Rule created successfully", data: { newRule }});
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });

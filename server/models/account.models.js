@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const { validateEmail, validatePassword } = require("../util/validator.js");
+
+const { validateEmail, validatePassword } = require("../util/validator");
+
 const { Schema } = mongoose;
 
 class Account {
@@ -10,6 +12,7 @@ class Account {
         required: [true, "Name is required"],
         minlength: [4, "Name must be at least 4 characters long"],
         maxlength: [35, "Name cannot exceed 35 characters"],
+        trim: true,
         match: [
           /^[a-zA-Z0-9_]+$/,
           "Username can only contain letters, numbers, and underscores",
@@ -20,6 +23,7 @@ class Account {
         unique: true,
         lowercase: true,
         required: [true, "Email is required"],
+        trim: true,
         validate: {
           validator: validateEmail,
           message: "Please enter a valid email",
