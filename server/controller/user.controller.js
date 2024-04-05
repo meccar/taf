@@ -32,22 +32,28 @@ class UserController {
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      let newAccount;
       // Send verification email and create new account concurrently
       await Promise.all([
         VerifyMailController.sendMail(req, res, email),
         new Promise((resolve, reject) => {
-          const newAccount = new Account({
+          Account.create({
             username,
             email,
             password: hashedPassword,
-          });
-          newAccount.save().then(resolve).catch(reject);
+          })
+            .save()
+            .then(() => {
+              resolve(newAccount);
+            })
+            .catch((error) => reject(error));
         }),
       ]);
 
       return res.status(202).json({
         status: "success",
         message: "Verification email sent successful",
+        data: { newAccount },
       });
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const {
   Schema,
   Types: { ObjectId },
@@ -9,11 +10,13 @@ class Post {
     this.schema = new Schema({
       title: {
         type: String,
+        trim: true,
         required: [true, "Title is required"],
         unique: true,
       },
       text: {
         type: String,
+        trim: true,
         required: [true, "Article is required"],
       },
       picture: {

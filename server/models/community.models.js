@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const { Schema } = mongoose;
 
 
@@ -7,11 +8,12 @@ class Community {
     this.schema = new Schema({
       name: {
         type: String,
+        trim: true,
         required: [true, "Community name is required"],
       },
       description: {
         type: String,
-        // required: [true, "Description is required"],
+        trim: true,
       },
       picture: {
         type: String,

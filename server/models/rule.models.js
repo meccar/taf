@@ -1,4 +1,6 @@
+/* eslint-disable prettier/prettier */
 const mongoose = require("mongoose");
+
 const {
   Schema,
   Types: { ObjectId },
@@ -12,10 +14,12 @@ class Rule {
       },
       title: {
         type: String,
+        trim: true,
         required: [true, "Title is required"],
       },
       description: {
         type: String,
+        trim: true,
         required: [true, "Description is required"],
       },
       timestamp: {

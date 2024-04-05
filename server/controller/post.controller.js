@@ -31,16 +31,13 @@ class PostController {
       ]);
 
       // Create a new post instance
-      const newPost = new Post({
+      const newPost = await Post.create({
         title: title,
         text: text,
         picture: picture,
         user_id: decoded.user_id,
         community_id: communityID,
       });
-
-      // Save the post to the database
-      await newPost.save();
 
       return res.status(201).json({
         status: "success",

@@ -10,16 +10,13 @@ class ReplyController {
         JWT.decodedToken(req.cookies.token),
       ]);
       // Create a new reply instance
-      const newReply = new Reply({
+      const newReply = await Reply.create({
         comment_id: communityId,
         user_id: decoded.user_id,
         text: text,
       });
 
-      // Save the reply to the database
-      await newReply.save();
-
-      res.status(201).json({ status: "success", message: "Reply successful" });
+      res.status(201).json({ status: "success", message: "Reply successful", data: { newReply } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });

@@ -16,18 +16,17 @@ class CommentController {
       ]);
 
       // Create a new comment instance
-      const newComment = new Comment({
+      const newComment = await Comment.create({
         post_id: post_id,
         user_id: decoded.user_id,
         text: text,
       });
 
-      // Save the comment to the database
-      await newComment.save();
-
-      res
-        .status(201)
-        .json({ status: "success", message: "Comment successful" });
+      res.status(201).json({
+        status: "success",
+        message: "Comment successful",
+        data: { newComment },
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: error.message });
