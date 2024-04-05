@@ -1,10 +1,10 @@
 const express = require("express");
 
 const router = express.Router();
-const CommentController = require("../api/comment.api.js");
+const ContactController = require("../controller/contact.controller");
 
 router
     .route("/")
-    .post( CommentController.comment);
+    .post(ContactController.contactForm);
 
 module.exports = router;

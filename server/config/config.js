@@ -14,9 +14,9 @@ function readPemFile(filePath) {
 const Config = {
   privateKey: readPemFile(path.join(__dirname, "..", "priv.pem")),
   publicKey: readPemFile(path.join(__dirname, "..", "pub.pem")),
-  port: process.env.PORT,
-  db_password: process.env.MONGODB_PASSWORD,
-  db: process.env.MONGODB,
+  PORT: process.env.PORT,
+  DB_PASSWORD: process.env.MONGODB_PASSWORD,
+  DB: process.env.MONGODB,
   mail: process.env.EMAIL_SENDER_ADDRESS,
   mail_password: process.env.EMAIL_SENDER_PASSWORD,
   node_env: process.env.NODE_ENV,
