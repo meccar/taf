@@ -2,54 +2,54 @@ const bcrypt = require("bcrypt");
 const Account = require("../models/account.models");
 const JWT = require("../token/jwt");
 // const { GeneratePaseto, EncryptPayload } = require("../token/paseto");
-const VerifyMailController = require("./verify_mail.controller");
+// const VerifyMailController = require("./verify_mail.controller");
 
 class UserController {
   async register(req, res) {
     try {
-      const { username, email, password } = req.body;
+      // const { username, email, password } = req.body;
 
-      // Check if account exists and email is verified concurrently
-      const [existingAccount, isEmailVerified] = await Promise.all([
-        Account.findOne({ email }),
-        Account.findOne({ email })
-          .lean()
-          .then((account) => account.is_email_verified),
-      ]);
+      // // Check if account exists and email is verified concurrently
+      // const [existingAccount, isEmailVerified] = await Promise.all([
+      //   Account.findOne({ email }),
+      //   Account.findOne({ email })
+      //     .lean()
+      //     .then((account) => account.is_email_verified),
+      // ]);
 
-      if (existingAccount && isEmailVerified) {
-        return res
-          .status(409)
-          .json({ status: "fail", message: "Account already exists" });
-      }
+      // if (existingAccount && isEmailVerified) {
+      //   return res
+      //     .status(409)
+      //     .json({ status: "fail", message: "Account already exists" });
+      // }
 
-      if (existingAccount && !isEmailVerified) {
-        return res.status(400).json({
-          status: "fail",
-          message: "Verification email was sent, please check your email",
-        });
-      }
+      // if (existingAccount && !isEmailVerified) {
+      //   return res.status(400).json({
+      //     status: "fail",
+      //     message: "Verification email was sent, please check your email",
+      //   });
+      // }
 
-      const hashedPassword = await bcrypt.hash(password, 12);
+      // const hashedPassword = await bcrypt.hash(password, 12);
 
-      let newAccount;
-      // Send verification email and create new account concurrently
-      await Promise.all([
-        VerifyMailController.sendMail(req, res, email),
-        new Promise((resolve, reject) => {
-          Account.create({
-            username,
-            email,
-            password: hashedPassword,
-          })
-            .save()
-            .then(() => {
-              resolve(newAccount);
-            })
-            .catch((error) => reject(error));
-        }),
-      ]);
-
+      // let newAccount;
+      // // Send verification email and create new account concurrently
+      // await Promise.all([
+      //   VerifyMailController.sendMail(req, res, email),
+      //   new Promise((resolve, reject) => {
+      //     Account.create({
+      //       username,
+      //       email,
+      //       password: hashedPassword,
+      //     })
+      //       .save()
+      //       .then(() => {
+      //         resolve(newAccount);
+      //       })
+      //       .catch((error) => reject(error));
+      //   }),
+      // ]);
+      const { newAccount } = req;
       return res.status(202).json({
         status: "success",
         message: "Verification email sent successful",

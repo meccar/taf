@@ -1,12 +1,13 @@
 const bcrypt = require("bcrypt");
 const Account = require("../models/account.models");
+const VerifyMailController = require("../controller/verify_mail.controller");
 
-const validateRegister = async (req, res, next) => {  
+const validateRegister = async (req, res, next) => {
+  const { username, email, password: inputPass } = req.body;
+
+  // Check if account exists and email is verified concurrently
   try {
-    const { username, email, password: inputPass.w } = req.body;
-
-    // Check if account exists and email is verified concurrently
-    const [existingAccount, isEmailVerified] = await Promise.([
+    const [existingAccount, isEmailVerified] = await Promise.all([
       Account.findOne({ $or: [{ email }, { username }] }),
       Account.findOne({ email })
         .lean()
@@ -26,11 +27,29 @@ const validateRegister = async (req, res, next) => {
       });
     }
 
-    const password = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(inputPass, 12);
 
+    let newAccount;
+    // Send verification email and create new account concurrently
+    await Promise.all([
+      VerifyMailController.sendMail(req, res, email),
+      new Promise((resolve, reject) => {
+        Account.create({
+          username,
+          email,
+          password: hashedPassword,
+        })
+          .save()
+          .then(() => {
+            resolve(newAccount);
+          })
+          .catch((error) => reject(error));
+      }),
+    ]);
+    req.newAccount = newAccount;
     next();
   } catch (error) {
-    throw error;
+    next(error); // Pass the error to the error handling middleware
   }
 };
 

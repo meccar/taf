@@ -41,7 +41,7 @@
     "jest": "^29.7.0",
     "prettier": "^3.2.5"
   },
-  "engines" : {
+  "engines": {
     "node": ">=10.0.0"
   }
 }

@@ -1,9 +1,9 @@
 const { V3 } = require("paseto");
 
-const Config = require("../config/config.js");
+const Config = require("../config/config");
 
-const secretkey = Config.secretkey;
-const publicKey = Config.publicKey;
+const { secretkey } = Config;
+const { publicKey } = Config;
 
 async function VerifyPaseto(req, res, next) {
   const token = req.header("Cookie").replace("token=", "");
@@ -33,7 +33,7 @@ async function VerifyPaseto(req, res, next) {
   }
 }
 
-async function DecryptPayload() {
+async function DecryptPayload(token) {
   try {
     await V3.decrypt(token, secretkey, {
       audience: "urn:y43qh6-3000.csb.app:client",
@@ -41,7 +41,7 @@ async function DecryptPayload() {
       clockTolerance: "1 min",
     });
   } catch (error) {
-    throw new Error("Failed to decrypt token: " + error.message);
+    throw new Error(`Failed to decrypt token: ${error.message}`);
   }
 }
 

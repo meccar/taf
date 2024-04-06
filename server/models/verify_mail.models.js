@@ -1,5 +1,6 @@
-/* eslint-disable camelcase */
 /* eslint-disable prettier/prettier */
+/* eslint-disable camelcase */
+
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
