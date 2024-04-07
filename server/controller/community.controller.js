@@ -20,6 +20,19 @@ class CommunityController {
     }
   }
 
+  async GetAllCommunity(req, res, next) {
+    try {
+      const community = await Community.find();
+      return res.status(200).json({
+        status: "success",
+        length: community.length,
+        data: { Communities: community },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async GetCommunityByID(id) {
     try {
       const community = await Promise.all([Community.findOne({ _id: id })]);
