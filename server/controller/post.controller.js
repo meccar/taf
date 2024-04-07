@@ -6,6 +6,7 @@
 const Community = require("../models/community.models");
 const Post = require("../models/post.models");
 const JWT = require("../token/jwt");
+const APIFeatures = require("../util/apiFeatures");
 const CommentController = require("./comment.controller");
 const ReplyController = require("./reply.controller");
 const RuleController = require("./rule.controller");
@@ -51,43 +52,61 @@ class PostController {
 
   async GetAllPost(req, res, next) {
     try {
-      const posts = await Post.find();
+      // const posts = await Post.find();
+      const features = new APIFeatures(Post.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+      const posts = await features.query;
 
       const postDetails = await Promise.all(
-        posts.map(async ({ _id, title, text, picture, community_id }) => {
-          const [communities, comments] = await Promise.all([
-            CommunityController.GetCommunityByID(community_id),
-            CommentController.getCommentByPost(_id),
-          ]);
-          const communitiesDetails = await Promise.all(
-            communities.map(async (community) => {
-              const { _id: communityId, ...communityData } =
-                community.toObject();
-              const rules = await RuleController.GetRuleByID(communityId);
-              return { ...communityData, Rule: rules };
-            }),
-          );
-
-          const commentsDetails = await Promise.all(
-            comments.filter(Boolean).map(async (comment) => {
-              // if (!comment) return null;
-
-              const replies = await ReplyController.getReplyByComment(
-                comment._id,
-              );
-              return { ...comment.toJSON(), Replies: replies };
-            }),
-          );
-
-          return {
-            id: _id,
+        posts.map(
+          async ({
+            _id,
             title,
             text,
             picture,
-            Community: communitiesDetails,
-            Comments: commentsDetails,
-          };
-        }),
+            upvotes,
+            timestamp,
+            community_id,
+          }) => {
+            const [communities, comments] = await Promise.all([
+              CommunityController.GetCommunityByID(community_id),
+              CommentController.getCommentByPost(_id),
+            ]);
+            const communitiesDetails = await Promise.all(
+              communities.map(async (community) => {
+                const { _id: communityId, ...communityData } =
+                  community.toObject();
+                const rules = await RuleController.GetRuleByID(communityId);
+                return { ...communityData, Rule: rules };
+              }),
+            );
+
+            const commentsDetails = await Promise.all(
+              comments.filter(Boolean).map(async (comment) => {
+                // if (!comment) return null;
+
+                const replies = await ReplyController.getReplyByComment(
+                  comment._id,
+                );
+                return { ...comment.toJSON(), Replies: replies };
+              }),
+            );
+
+            return {
+              id: _id,
+              title,
+              text,
+              picture,
+              upvotes,
+              timestamp,
+              Community: communitiesDetails,
+              Comments: commentsDetails,
+            };
+          },
+        ),
       );
 
       return res.status(200).json({
@@ -100,7 +119,7 @@ class PostController {
     }
   }
 
-  async GetPost(req, res, next) {
+  async GetPost(req, res) {
     try {
       const post = await Post.findById(req.params.id);
 
@@ -121,6 +140,39 @@ class PostController {
       return post._id;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async updatePost(req, res) {
+    try {
+      const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+      });
+      res.status(200).json({
+        status: "success",
+        data: {
+          post,
+        },
+      });
+    } catch (error) {
+      return res.status(404).json({ status: "fail", message: error.message });
+    }
+  }
+
+  async deletePost(req, res) {
+    try {
+      await Post.findByIdAndDelete(req.params.id);
+
+      res.status(204).json({
+        status: "success",
+        data: null,
+      });
+    } catch (err) {
+      res.status(404).json({
+        status: "fail",
+        message: err,
+      });
     }
   }
 }

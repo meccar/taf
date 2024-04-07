@@ -3,7 +3,7 @@ const Account = require("../models/account.models");
 const JWT = require("../token/jwt");
 
 
-const validateRegister = async (req, res, next) => {
+const validateLogin = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   // Check if account exists and email is verified concurrently
@@ -55,10 +55,13 @@ const validateRegister = async (req, res, next) => {
     await JWT.generateCookie(req, res, accessToken);
     await res.setHeader("Authorization", `Bearer ${accessToken}`);
 
+    req.accessToken = accessToken;
+    req.refreshToken = refreshToken;
+
     next();
   } catch (error) {
     next(error); // Pass the error to the error handling middleware
   }
 };
 
-module.exports = validateRegister;
+module.exports = validateLogin;
