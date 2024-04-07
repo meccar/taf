@@ -35,10 +35,59 @@ api/v1/post/:id
 
 api/v1/community
 
-
 api/v1/post
 
 api/v1/logout
 
 
 ======================================================================
+
+
+PATCH REQUEST:
+
+
+api/v1/post/:id           ||          input [ title, text, picture, upvotes, communityName ]
+
+
+======================================================================
+
+
+DELETE REQUEST:
+
+
+api/v1/post/:id
+
+
+======================================================================
+
+
+FILTER REQUEST:
+
+
+< 1 > api/v1/post?OBJECT[METHOD]=NUMBER
+
+OBJECT = [ upvotes ]
+
+METHOD = [ gte, gt, lte, lt ]
+
+*gte    :   greater than or equal to
+
+*gt     :   greater than
+
+*lte    :   less than or equal to
+
+*lt     :   less than
+
+
+
+
+< 2 > api/v1/post?OBJECT=CONTENT
+
+OBJECT = [ title ]
+
+CONTENT = OBJECT's data
+
+
+
+
+

@@ -8,6 +8,10 @@ router
   .get(PostController.GetAllPost)
   .post(PostController.CreatePost);
 
-router.route("/:id").post(PostController.GetPost);
+router
+  .route("/:id")
+  .post(PostController.GetPost)
+  .patch(PostController.updatePost)
+  .delete(PostController.deletePost);
 
 module.exports = router;
