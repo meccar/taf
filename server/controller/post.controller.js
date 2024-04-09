@@ -7,10 +7,11 @@ const Community = require("../models/community.models");
 const Post = require("../models/post.models");
 const JWT = require("../token/jwt");
 const APIFeatures = require("../util/apiFeatures");
-const CommentController = require("./comment.controller");
-const ReplyController = require("./reply.controller");
-const RuleController = require("./rule.controller");
-const CommunityController = require("./community.controller");
+// const CommentController = require("./comment.controller");
+// const ReplyController = require("./reply.controller");
+// const RuleController = require("./rule.controller");
+// const CommunityController = require("./community.controller");
+const postProcessor = require("../processor/post.processor");
 
 class PostController {
   async CreatePost(req, res) {
@@ -60,54 +61,53 @@ class PostController {
         .paginate();
       const posts = await features.query;
 
-      const postDetails = await Promise.all(
-        posts.map(
-          async ({
-            _id,
-            title,
-            text,
-            picture,
-            upvotes,
-            timestamp,
-            community_id,
-          }) => {
-            const [communities, comments] = await Promise.all([
-              CommunityController.GetCommunityByID(community_id),
-              CommentController.getCommentByPost(_id),
-            ]);
-            const communitiesDetails = await Promise.all(
-              communities.map(async (community) => {
-                const { _id: communityId, ...communityData } =
-                  community.toObject();
-                const rules = await RuleController.GetRuleByID(communityId);
-                return { ...communityData, Rule: rules };
-              }),
-            );
+      // const postDetails = await Promise.all(
+      //   posts.map(
+      //     async ({
+      //       _id,
+      //       title,
+      //       text,
+      //       picture,
+      //       upvotes,
+      //       timestamp,
+      //       community_id,
+      //     }) => {
+      //       const [communities, comments] = await Promise.all([
+      //         CommunityController.GetCommunityByID(community_id),
+      //         CommentController.getCommentByPost(_id),
+      //       ]);
+      //       const communitiesDetails = await Promise.all(
+      //         communities.map(async (community) => {
+      //           const { _id: communityId, ...communityData } =
+      //             community.toObject();
+      //           const rules = await RuleController.GetRuleByID(communityId);
+      //           return { ...communityData, Rule: rules };
+      //         }),
+      //       );
 
-            const commentsDetails = await Promise.all(
-              comments.filter(Boolean).map(async (comment) => {
-                // if (!comment) return null;
+      //       const commentsDetails = await Promise.all(
+      //         comments.filter(Boolean).map(async (comment) => {
+      //           const replies = await ReplyController.getReplyByComment(
+      //             comment._id,
+      //           );
+      //           return { ...comment.toJSON(), Replies: replies };
+      //         }),
+      //       );
 
-                const replies = await ReplyController.getReplyByComment(
-                  comment._id,
-                );
-                return { ...comment.toJSON(), Replies: replies };
-              }),
-            );
-
-            return {
-              id: _id,
-              title,
-              text,
-              picture,
-              upvotes,
-              timestamp,
-              Community: communitiesDetails,
-              Comments: commentsDetails,
-            };
-          },
-        ),
-      );
+      //       return {
+      //         id: _id,
+      //         title,
+      //         text,
+      //         picture,
+      //         upvotes,
+      //         timestamp,
+      //         Community: communitiesDetails,
+      //         Comments: commentsDetails,
+      //       };
+      //     },
+      //   ),
+      // );
+      const postDetails = await postProcessor(posts);
 
       return res.status(200).json({
         status: "success",

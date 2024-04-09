@@ -19,28 +19,12 @@ class APIFeatures {
     return this;
   }
 
-  // sort() {
-  //   if (this.queryString.sort) {
-  //     const sortBy = this.queryString.sort.split(",").join(" ");
-  //     this.query = this.query.sort(sortBy);
-  //   } else {
-  //     this.query = this.query.sort("-createdAt");
-  //   }
-
-  //   return this;
-  // }
-
   sort() {
     if (this.queryString.sort) {
-      let sortBy = this.queryString.sort.split(",").join(" ");
-      // If sorting by date, parse date field names
-      if (sortBy.includes("createdAt")) {
-        sortBy = sortBy.replace(/createdAt/g, "createdAt -1");
-      }
+      const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      // Default sorting by createdAt in descending order
-      this.query = this.query.sort("-createdAt");
+      this.query = this.query.sort("timestamp");
     }
 
     return this;
@@ -65,5 +49,7 @@ class APIFeatures {
     this.query = this.query.skip(skip).limit(limit);
     return this;
   }
+
+
 }
 module.exports = APIFeatures;
