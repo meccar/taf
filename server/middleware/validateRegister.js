@@ -7,45 +7,41 @@ const validateRegister = async (req, res, next) => {
 
   // Check if account exists and email is verified concurrently
   try {
-    const [existingAccount, isEmailVerified] = await Promise.all([
-      Account.findOne({ $or: [{ email }, { username }] }),
-      Account.findOne({ email })
-        .lean()
-        .then((account) => account.is_email_verified),
-    ]);
+    const existingAccount = await Account.findOne({
+      $or: [{ email }, { username }],
+    });
+    const isEmailVerified = existingAccount
+      ? existingAccount.is_email_verified
+      : false;
 
     if (existingAccount && isEmailVerified) {
-      return res
-        .status(409)
-        .json({ status: "fail", message: "Account already exists" });
+      return res.status(409).json({
+        status: "fail",
+        message: "Account already exists",
+        data: { existingAccount, isEmailVerified },
+      });
     }
 
     if (existingAccount && !isEmailVerified) {
       return res.status(400).json({
         status: "fail",
         message: "Verification email was sent, please check your email",
+        data: { existingAccount, isEmailVerified },
       });
     }
 
     const hashedPassword = await bcrypt.hash(inputPass, 12);
 
-    let newAccount;
-    // Send verification email and create new account concurrently
-    await Promise.all([
-      VerifyMailController.sendMail(req, res, email),
-      new Promise((resolve, reject) => {
-        Account.create({
-          username,
-          email,
-          password: hashedPassword,
-        })
-          .save()
-          .then(() => {
-            resolve(newAccount);
-          })
-          .catch((error) => reject(error));
-      }),
-    ]);
+    // Create a new account
+    const newAccount = await Account.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    // Send verification email
+    await VerifyMailController.sendMail(req, res, email);
+
     req.newAccount = newAccount;
     next();
   } catch (error) {

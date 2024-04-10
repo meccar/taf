@@ -112,15 +112,17 @@ class UserController {
       // const { accessToken, refreshToken } = await JWT.generateTokens(user._id);
       // await JWT.generateCookie(req, res, accessToken);
       // await res.setHeader("Authorization", `Bearer ${accessToken}`);
-      const { accessToken, refreshToken } = req;
+      const { accessToken, refreshToken, user } = req;
 
       return res
         .status(200)
-        .json({ status: "success", data: { accessToken, refreshToken } });
+        .json({ status: "success", data: { accessToken, refreshToken, user } });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ status: "fail", message: `Login failed: ${error.message}` });
+      return res.status(500).json({
+        status: "fail",
+        data: { user },
+        message: `Login failed: ${error.message}`,
+      });
     }
   }
 

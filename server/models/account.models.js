@@ -42,15 +42,24 @@ class Account {
           message: "Please enter a valid Password",
         },
       },
-      message: String,
       timestamp: {
         type: Date,
         default: Date.now, // Set timestamp on creation
       },
+    });
+    this.schema.pre("find", function (next) {
+      this.find({ is_email_verified: { $ne: false } });
+      next();
     });
   }
 }
 
 const account = new Account();
 const AccountModel = mongoose.model("accounts", account.schema);
+
+// AccountModel.pre("find", function (next) {
+//   this.find({ is_email_verified: { $ne: false } });
+//   next();
+// });
+
 module.exports = AccountModel;

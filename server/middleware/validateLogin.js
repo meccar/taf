@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const Account = require("../models/account.models");
 const JWT = require("../token/jwt");
 
-
 const validateLogin = async (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -57,7 +56,7 @@ const validateLogin = async (req, res, next) => {
 
     req.accessToken = accessToken;
     req.refreshToken = refreshToken;
-
+    req.user = user;
     next();
   } catch (error) {
     next(error); // Pass the error to the error handling middleware
