@@ -7,28 +7,45 @@ const validateRegister = async (req, res, next) => {
 
   // Check if account exists and email is verified concurrently
   try {
-    const existingAccount = await Account.findOne({
+    await Account.findOne({
       $or: [{ email }, { username }],
     });
-    const isEmailVerified = existingAccount
-      ? existingAccount.is_email_verified
-      : false;
+    // const existingAccount = await Account.findOne({
+    //   $or: [{ email }, { username }],
+    // });
+    // const isEmailVerified = existingAccount
+    //   ? existingAccount.is_email_verified
+    //   : false;
 
-    if (existingAccount && isEmailVerified) {
-      return res.status(409).json({
-        status: "fail",
-        message: "Account already exists",
-        data: { existingAccount, isEmailVerified },
-      });
-    }
+    // if (existingAccount && isEmailVerified) {
+    //   return res.status(409).json({
+    //     status: "fail",
+    //     message: "Account already exists",
+    //     data: { existingAccount, isEmailVerified },
+    //   });
+    // }
 
-    if (existingAccount && !isEmailVerified) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Verification email was sent, please check your email",
-        data: { existingAccount, isEmailVerified },
-      });
-    }
+    // if (existingAccount && !isEmailVerified) {
+    //   return res.status(400).json({
+    //     status: "fail",
+    //     message: "Verification email was sent, please check your email",
+    //     data: { existingAccount, isEmailVerified },
+    //   });
+    // }
+    // if (existingAccount) {
+    //   if (existingAccount.is_email_verified) {
+    //     return res.status(409).json({
+    //       status: "fail",
+    //       message: "Account already exists",
+    //       data: { existingAccount, isEmailVerified: true },
+    //     });
+    //   }
+    //   return res.status(400).json({
+    //     status: "fail",
+    //     message: "Verification email was sent, please check your email",
+    //     data: { existingAccount, isEmailVerified: false },
+    //   });
+    // }
 
     const hashedPassword = await bcrypt.hash(inputPass, 12);
 
@@ -45,6 +62,17 @@ const validateRegister = async (req, res, next) => {
     req.newAccount = newAccount;
     next();
   } catch (error) {
+    if (
+      error.code === 11000 &&
+      error.keyPattern &&
+      error.keyPattern.email === 1
+    ) {
+      // If a duplicate key violation occurred for the 'email' field
+      return res.status(409).json({
+        status: "fail",
+        message: "Email is already registered",
+      });
+    }
     next(error); // Pass the error to the error handling middleware
   }
 };

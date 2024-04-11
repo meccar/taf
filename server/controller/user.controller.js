@@ -57,7 +57,9 @@ class UserController {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ status: "fail", message: error.message });
+      return res
+        .status(error.status || 500)
+        .json({ status: "fail", message: error.message });
     }
   }
 
@@ -120,7 +122,7 @@ class UserController {
     } catch (error) {
       return res.status(500).json({
         status: "fail",
-        data: { user },
+        // data: { user },
         message: `Login failed: ${error.message}`,
       });
     }
