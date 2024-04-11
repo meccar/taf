@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 // const apiRoutes = require("./api_routes");
+const AppError = require("./util/appError");
 const commentRoute = require("./routes/commentRoute");
 const communityRoute = require("./routes/communityRoute");
 const contactRoute = require("./routes/contactRoute");
@@ -56,9 +57,24 @@ app.use("/api/v1/verifymail", verifymailRoute);
 
 app.use("/user", JWT.verifyToken, protectedRoute);
 
+
+
+app.all("*", (req, res, next) => {
+  // res.status(404).json({
+  //   status: "fail",
+  //   message: `Cannot find ${req.originalURL}`,
+  // });
+  next(AppError(`Cannot find ${req.originalURL}`, 404));
+});
+
 app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
   console.error(err.stack);
-  res.status(500).send("Internal Server Error");
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
 });
 
 module.exports = app;

@@ -5,9 +5,10 @@ const nodemailer = require("nodemailer");
 const Config = require("../config/config");
 const Account = require("../models/account.models");
 const VerifyMail = require("../models/verify_mail.models");
+const catchAsync = require("../util/catchAsync");
 
-class VerifyMailController {
-async sendMail(req, res, email) {
+
+exports.sendMail = async (req, res, email) => {
   const secretCode = crypto.randomBytes(32).toString("hex");
   const verifyLink = `https://turbo-space-carnival-9jjggjqj7vxfqp6-3000.app.github.dev/api/v1/verifymail/${email}/${secretCode}`;
 
@@ -38,8 +39,7 @@ async sendMail(req, res, email) {
   await newVerifyMail.save();
 }
 
-  async verifyMail(req, res) {
-    try {
+exports.verifyMail = catchAsync(async (req, res, next) => {
       const verification = await VerifyMail.findOne({
         email: req.params.email,
         secret_code: req.params.secretCode,
@@ -77,10 +77,5 @@ async sendMail(req, res, email) {
       return res
         .status(200)
         .json({ message: "Account registered successfully" });
-    } catch (error) {
-      return res.status(500).json({ message: error.message });
-    }
-  }
-}
+    }); 
 
-module.exports = new VerifyMailController();
