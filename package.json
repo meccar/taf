@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cd ./server && npm run test",
+    "debug": "ndb ./server/server.js",
     "dev": "concurrently \"cd ./client && npm run client\" \"cd ./server && npm run server\""
   },
   "author": "",
