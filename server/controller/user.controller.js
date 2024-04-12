@@ -11,7 +11,6 @@ exports.register = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { accessToken, refreshToken, user } = req;
-
   return res
     .status(200)
     .json({ status: "success", data: { accessToken, refreshToken, user } });
