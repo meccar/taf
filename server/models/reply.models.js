@@ -6,32 +6,27 @@ const {
   Types: { ObjectId },
 } = mongoose;
 
-class Reply {
-  constructor() {
-    this.schema = new Schema({
-      comment_id: {
-        type: ObjectId,
-      },
-      user_id: {
-        type: ObjectId,
-      },
-      text: {
-        type: String,
-        trim: true,
-        required: true,
-      },
-      upvotes: {
-        type: Number,
-        default: 0,
-      },
-      timestamp: {
-        type: Date,
-        default: Date.now, // Set timestamp on creation
-      },
-    });
-  }
-}
+const ReplySchema = new Schema({
+  comment_id: {
+    type: ObjectId,
+  },
+  user_id: {
+    type: ObjectId,
+  },
+  text: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  upvotes: {
+    type: Number,
+    default: 0,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now, // Set timestamp on creation
+  },
+});
 
-const reply = new Reply();
-const ReplyModel = mongoose.model("replies", reply.schema);
-module.exports = ReplyModel;
+const Reply = mongoose.model("replies", ReplySchema);
+module.exports = Reply;

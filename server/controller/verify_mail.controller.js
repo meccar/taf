@@ -3,10 +3,8 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
 const Config = require("../config/config");
-const Account = require("../models/account.models");
 const VerifyMail = require("../models/verify_mail.models");
 const catchAsync = require("../util/catchAsync");
-const AppError = require("../util/appError");
 
 exports.sendMail = async (req, res, email) => {
   const secretCode = crypto.randomBytes(32).toString("hex");

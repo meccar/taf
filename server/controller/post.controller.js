@@ -1,8 +1,3 @@
-/* eslint-disable no-useless-catch */
-/* eslint-disable camelcase */
-/* eslint-disable node/no-unsupported-features/es-syntax */
-/* eslint-disable node/no-unsupported-features/es-builtins */
-
 const Community = require("../models/community.models");
 const Post = require("../models/post.models");
 const JWT = require("../token/jwt");
@@ -76,12 +71,8 @@ exports.GetPost = catchAsync(async (req, res, next) => {
 });
 
 exports.getPostID = async (title) => {
-  try {
-    const post = await Promise.all([Post.findOne({ title: title })]);
-    return post._id;
-  } catch (error) {
-    throw error;
-  }
+  const post = await Promise.all([Post.findOne({ title: title })]);
+  return post._id;
 };
 
 exports.updatePost = catchAsync(async (req, res) => {
