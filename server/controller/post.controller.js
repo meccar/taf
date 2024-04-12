@@ -9,6 +9,7 @@ const JWT = require("../token/jwt");
 const APIFeatures = require("../util/apiFeatures");
 const postProcessor = require("../processor/post.processor");
 const catchAsync = require("../util/catchAsync");
+const AppError = require("../util/appError");
 
 exports.CreatePost = catchAsync(async (req, res, next) => {
   const { title, text, picture, communityName } = req.body;
@@ -44,34 +45,32 @@ exports.CreatePost = catchAsync(async (req, res, next) => {
 });
 
 exports.GetAllPost = catchAsync(async (req, res, next) => {
-  try {
-    // const posts = await Post.find();
-    const features = new APIFeatures(Post.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    const posts = await features.query;
+  // const posts = await Post.find();
+  const features = new APIFeatures(Post.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  const posts = await features.query;
 
-    const postDetails = await postProcessor(posts);
+  const postDetails = await postProcessor(posts);
 
-    return res.status(200).json({
-      status: "success",
-      length: postDetails.length,
-      data: { Posts: postDetails },
-    });
-  } catch (error) {
-    return res.status(500).json({ status: "fail", message: error.message });
-  }
+  return res.status(200).json({
+    status: "success",
+    length: postDetails.length,
+    data: { Posts: postDetails },
+  });
 });
 
 exports.GetPost = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.id);
 
   if (!post) {
-    return res
-      .status(404)
-      .json({ status: "fail", message: "Post not founded" });
+    // return res
+    //   .status(404)
+    //   .json({ status: "fail", message: "Post not founded" });
+
+    next(AppError("Post not founded", 404));
   }
   return res.status(200).json({ status: "success", data: { post } });
 });
