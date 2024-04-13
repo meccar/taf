@@ -6,15 +6,22 @@ const verifyRegister = async (req, res, next) => {
     const { email } = req.body;
     const [existingAccount, isEmailVerified] = await Promise.all([
       Account.findOne({ email }),
-      Account.findOne({ email }).lean().then((account) => account?.is_email_verified),
+      Account.findOne({ email })
+        .lean()
+        .then((account) => account?.is_email_verified),
     ]);
 
     if (existingAccount && isEmailVerified) {
-      return res.status(409).json({ status: "fail", message: "Account already exists" });
+      return res
+        .status(409)
+        .json({ status: "fail", message: "Account already exists" });
     }
 
     if (existingAccount && !isEmailVerified) {
-      return res.status(400).json({ status: "fail", message: "Verification email was sent, please check your email" });
+      return res.status(400).json({
+        status: "fail",
+        message: "Verification email was sent, please check your email",
+      });
     }
 
     next();
@@ -33,29 +40,44 @@ const verifyLogin = async (req, res, next) => {
           .catch(reject);
       }),
       new Promise((resolve, reject) => {
-        Account.findOne({ email }).lean().then((account) => {
-          resolve(account?.is_email_verified);
-        }).catch(reject);
+        Account.findOne({ email })
+          .lean()
+          .then((account) => {
+            resolve(account?.is_email_verified);
+          })
+          .catch(reject);
       }),
-      bcrypt.compare(password, (await Account.findOne({ $or: [{ email }, { username }] }))?.password || ''),
+      bcrypt.compare(
+        password,
+        (await Account.findOne({ $or: [{ email }, { username }] }))?.password ||
+          "",
+      ),
     ]);
 
     if (!user) {
-      return res.status(401).json({ status: "fail", message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ status: "fail", message: "Invalid credentials" });
     }
 
     if (!isEmailVerified) {
-      return res.status(403).json({ status: "fail", message: "Account has not authorized" });
+      return res
+        .status(403)
+        .json({ status: "fail", message: "Account has not authorized" });
     }
 
     if (!passwordMatch) {
-      return res.status(401).json({ status: "fail", message: "Password is incorrect" });
+      return res
+        .status(401)
+        .json({ status: "fail", message: "Password is incorrect" });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    return res.status(500).json({ status: "fail", message: "Login failed: " + error.message });
+    return res
+      .status(500)
+      .json({ status: "fail", message: "Login failed: " + error.message });
   }
 };
 
@@ -70,5 +92,4 @@ const verifyLogin = async (req, res, next) => {
 module.exports = {
   verifyRegister,
   verifyLogin,
-//   verifyLogout,
 };

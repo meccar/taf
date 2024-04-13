@@ -6,27 +6,32 @@ const {
   Types: { ObjectId },
 } = mongoose;
 
-const CommentSchema = new Schema({
-  post_id: {
-    type: ObjectId,
-  },
-  user_id: {
-    type: ObjectId,
-  },
-  text: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  upvotes: {
-    type: Number,
-    default: 0,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
+class Comment {
+  constructor() {
+    this.schema = new Schema({
+      post_id: {
+        type: ObjectId,
+      },
+      user_id: {
+        type: ObjectId,
+      },
+      text: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      upvotes: {
+        type: Number,
+        default: 0,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    });
+  }
+}
 
-const Comment = mongoose.model("comments", CommentSchema);
-module.exports = Comment;
+const comment = new Comment();
+const CommentModel = mongoose.model("comments", comment.schema);
+module.exports = CommentModel;
