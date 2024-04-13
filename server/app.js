@@ -57,7 +57,7 @@ app.use("/api/v1/reply", replyRoute);
 app.use("/api/v1/rule", ruleRoute);
 app.use("/api/v1/verifymail", verifymailRoute);
 
-app.use("/user", JWT.verifyToken, protectedRoute);
+app.use("/user", protectedRoute);
 
 app.all("*", (req, res, next) => {
   next(AppError(`Cannot find ${req.originalURL}`, 404));
