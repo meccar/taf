@@ -50,7 +50,19 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.retrictTo = (...roles) => {
+// exports.retrictTo = (...roles) => {
+//   (req, res, next) => {
+//     if (!roles.includes(req.user.role)) {
+//       return next(
+//         new AppError("You do not have permission to perform this action", 403),
+//       );
+//     }
+//     next();
+//   };
+// };
+
+exports.retrictTo =
+  (...roles) =>
   (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
@@ -59,7 +71,6 @@ exports.retrictTo = (...roles) => {
     }
     next();
   };
-};
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await Account.findOne({ email: req.body.email });

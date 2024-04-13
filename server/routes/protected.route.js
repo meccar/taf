@@ -2,7 +2,7 @@
 const express = require("express");
 
 const protected = express.Router();
-const JWT = require("../token/jwt");
+// const JWT = require("../token/jwt");
 const authController = require("../controller/auth.controller");
 
 // const { VerifyPaseto, DecryptPayload } = require("../middleware/pasetoAuth");
