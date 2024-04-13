@@ -1,8 +1,9 @@
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 
-const { validatePassword, validatePhone } = require("../util/validator");
+const { validatePassword } = require("../util/validator");
 
 const AccountSchema = new mongoose.Schema({
   username: {
@@ -31,6 +32,11 @@ const AccountSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -41,16 +47,14 @@ const AccountSchema = new mongoose.Schema({
       message: "Please enter a valid Password",
     },
   },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   timestamp: {
     type: Date,
     default: Date.now, // Set timestamp on creation
   },
 });
-
-// AccountSchema.pre(/^find/, function (next) {
-//   this.find({ is_email_verified: { $ne: false } });
-//   next();
-// });
 
 AccountSchema.pre("save", async function (next) {
   // Only run this func if password was modified
@@ -72,6 +76,30 @@ AccountSchema.methods.correctPassword = async function (
   userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+AccountSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // False means NOT changed
+  return false;
+};
+
+AccountSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  console.log({ resetToken }, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 const Account = mongoose.model("accounts", AccountSchema);

@@ -10,18 +10,17 @@ const morgan = require("morgan");
 
 // const apiRoutes = require("./api_routes");
 const AppError = require("./util/appError");
-const commentRoute = require("./routes/commentRoute");
-const communityRoute = require("./routes/communityRoute");
-const contactRoute = require("./routes/contactRoute");
-const loginRoute = require("./routes/loginRoute");
-const logoutRoute = require("./routes/logoutRoute");
-const postRoute = require("./routes/postRoute");
-const registerRoute = require("./routes/registerRoute");
-const replyRoute = require("./routes/replyRoute");
-const ruleRoute = require("./routes/ruleRoute");
-const verifymailRoute = require("./routes/verifymailRoute");
+const commentRoute = require("./routes/comment.route");
+const communityRoute = require("./routes/community.route");
+const contactRoute = require("./routes/contact.route");
+const userRoute = require("./routes/user.route");
+// const logoutRoute = require("./routes/logoutRoute");
+const postRoute = require("./routes/post.route");
+const replyRoute = require("./routes/reply.route");
+const ruleRoute = require("./routes/rule.route");
+const verifymailRoute = require("./routes/verifymail.route");
 const ErrorHandler = require("./controller/error.controller");
-const protectedRoute = require("./routes/protectedRoute");
+const protectedRoute = require("./routes/protected.route");
 const JWT = require("./token/jwt");
 
 // const { VerifyPaseto, DecryptPayload } = require("./middleware/pasetoAuth");
@@ -40,22 +39,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(express.json());
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.headers);
   next();
 });
-app.use(cookieParser());
 
+app.use(cookieParser());
 app.use(morgan("dev"));
 
 app.use("/api/v1/comment", commentRoute);
 app.use("/api/v1/community", communityRoute);
 app.use("/api/v1/contact", contactRoute);
-app.use("/api/v1/login", loginRoute);
-app.use("/api/v1/logout", logoutRoute);
 app.use("/api/v1/post", postRoute);
-app.use("/api/v1/register", registerRoute);
+app.use("/api/v1/users", userRoute);
 app.use("/api/v1/reply", replyRoute);
 app.use("/api/v1/rule", ruleRoute);
 app.use("/api/v1/verifymail", verifymailRoute);

@@ -63,9 +63,9 @@ exports.login = catchAsync(async (req, res, next) => {
   // const passwordMatch = await bcrypt.compare(password, user.password);
 
   delete user.password;
-  console.log(user);
 
   const { accessToken, refreshToken } = await JWT.generateTokens(user._id);
+
   await JWT.generateCookie(req, res, accessToken);
   await res.setHeader("Authorization", `Bearer ${accessToken}`);
 
@@ -73,7 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   return res
     .status(200)
-    .json({ status: "success", data: { accessToken, refreshToken, user } });
+    .json({ status: "success", accessToken, refreshToken, data: { user } });
 });
 
 exports.logout = catchAsync(async (req, res, next) => {
