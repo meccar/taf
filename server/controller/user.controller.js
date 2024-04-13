@@ -70,6 +70,7 @@ exports.login = catchAsync(async (req, res, next) => {
   await res.setHeader("Authorization", `Bearer ${accessToken}`);
 
   // const { accessToken, refreshToken, user } = req;
+
   return res
     .status(200)
     .json({ status: "success", data: { accessToken, refreshToken, user } });
