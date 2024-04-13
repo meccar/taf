@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 const cookieParser = require("cookie-parser");
 
-const Config = require("../config/config.js");
-const option = require("../config/jwtConfig.js");
+const Config = require("../config/config");
+const option = require("../config/jwtConfig");
 
 // Function to generate JWT token asynchronously
 class JWT {

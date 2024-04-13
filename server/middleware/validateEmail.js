@@ -11,19 +11,21 @@ exports.validateEmail = catchAsync(async (req, res, next) => {
 
   if (Date.now() > verification.expires_at) {
     this.sendMail(req, res, verification.email);
-    return new AppError(
-      "Verification code expired. Please check your email for the latest one.",
-      400,
+    return next(
+      new AppError(
+        "Verification code expired. Please check your email for the latest one.",
+        400,
+      ),
     );
   }
 
   if (!verification) {
-    return new AppError("Invalid verification details", 404);
+    return next(new AppError("Invalid verification details", 404));
   }
 
   // Check if verification has already been used
   if (verification.is_used) {
-    return new AppError("Account already registered", 400);
+    return next(new AppError("Account already registered", 400));
   }
 
   verification.is_used = true;

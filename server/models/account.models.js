@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 
-const { Schema } = mongoose;
+const { validatePassword, validatePhone } = require("../util/validator");
 
-const AccountSchema = new Schema({
+const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, "Name is required"],
@@ -23,7 +23,8 @@ const AccountSchema = new Schema({
     required: [true, "Email is required"],
     trim: true,
     validate: {
-      validator: [validator.isEmail, "Please enter a valid email"],
+      validator: validator.isEmail,
+      message: "Please enter a valid email",
     },
   },
   is_email_verified: {
@@ -34,24 +35,10 @@ const AccountSchema = new Schema({
     type: String,
     required: [true, "Password is required"],
     minlength: [8, "Password must be at least 8 characters long"],
+    select: false,
     validate: {
-      validator: [
-        validator.isStrongPassword({
-          minLength: 8,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1,
-          returnScore: false,
-          pointsPerUnique: 1,
-          pointsPerRepeat: 0.5,
-          pointsForContainingLower: 10,
-          pointsForContainingUpper: 10,
-          pointsForContainingNumber: 10,
-          pointsForContainingSymbol: 10,
-        }),
-        "Please enter a valid Password",
-      ],
+      validator: validatePassword,
+      message: "Please enter a valid Password",
     },
   },
   timestamp: {
@@ -79,6 +66,13 @@ AccountSchema.pre("^find", async (next) => {
   this.find({ is_email_verified: { $ne: false } });
   next();
 });
+
+AccountSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const Account = mongoose.model("accounts", AccountSchema);
 module.exports = Account;
