@@ -66,6 +66,13 @@ AccountSchema.pre("save", async function (next) {
   next();
 });
 
+AccountSchema.pre("save", (next) => {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 AccountSchema.pre("^find", async (next) => {
   this.find({ is_email_verified: { $ne: false } });
   next();

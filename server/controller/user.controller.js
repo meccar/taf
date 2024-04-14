@@ -48,20 +48,6 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect Email or Password", 401));
   }
 
-  // new Promise((resolve, reject) => {
-  //   Account.findOne({ email })
-  //     .lean()
-  //     .then((account) => {
-  //       resolve(account.is_email_verified);
-  //     })
-  //     .catch(reject);
-  // }),
-  // if (!isEmailVerified) {
-  //   return next(new AppError("Account has not authorized", 403));
-  // }
-
-  // const passwordMatch = await bcrypt.compare(password, user.password);
-
   delete user.password;
 
   const { accessToken, refreshToken } = await JWT.generateTokens(user._id);
