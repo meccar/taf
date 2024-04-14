@@ -60,7 +60,7 @@ app.use("/api/v1/verifymail", verifymailRoute);
 app.use("/user", protectedRoute);
 
 app.all("*", (req, res, next) => {
-  next(AppError(`Cannot find ${req.originalURL}`, 404));
+  next(new AppError(`Cannot find ${req.originalURL}`, 404));
 });
 app.use(ErrorHandler);
 
