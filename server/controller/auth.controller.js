@@ -9,6 +9,43 @@ const catchAsync = require("../util/catchAsync");
 const sendEmail = require("../util/email");
 const JWT = require("../token/jwt");
 
+const createSendToken = (user, statusCode, res) => {
+  const token = JWT.generateCookie(user._id);
+
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  // Check if account exists and email is verified concurrently
+  // const [user, isEmailVerified, passwordMatch] = await Promise.all([
+  const user = await Account.findOne({ $or: [{ email }, { username }] }).select(
+    "+password",
+  );
+
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError("Incorrect Email or Password", 401));
+  }
+
+  delete user.password;
+
+  // const { accessToken, refreshToken } = await JWT.generateTokens(user._id);
+
+  // await JWT.generateCookie(req, res, accessToken);
+  // await res.setHeader("Authorization", `Bearer ${accessToken}`);
+
+  // const { accessToken, refreshToken, user } = req;
+
+  createSendToken(user, 200, res);
+});
+
 exports.verifyToken = catchAsync(async (req, res, next) => {
   let token;
 
@@ -135,9 +172,20 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   await user.save();
 
-  const token = JWT.generateTokens(user._id);
-  res.status(200).json({
-    status: "success",
-    token,
-  });
+  createSendToken(user, 200, res);
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const user = await Account.findById(req.user.id).select("+password");
+
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError("Your current password is incorrect", 401));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+
+  await user.save();
+
+  createSendToken(user, 200, res);
 });

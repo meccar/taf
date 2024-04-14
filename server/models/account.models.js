@@ -47,6 +47,17 @@ const AccountSchema = new mongoose.Schema({
       message: "Please enter a valid Password",
     },
   },
+  passwordConfirm: {
+    type: String,
+    required: [true, "Please confirm your password"],
+    validate: {
+      // This only works on CREATE and SAVE!!!
+      validator: function (el) {
+        return el === this.password;
+      },
+      message: "Passwords are not the same!",
+    },
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -62,7 +73,7 @@ AccountSchema.pre("save", async function (next) {
 
   // Hash password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
-
+  this.passwordConfirm = undefined;
   next();
 });
 
