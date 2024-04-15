@@ -61,6 +61,11 @@ const AccountSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
   timestamp: {
     type: Date,
     default: Date.now, // Set timestamp on creation
@@ -84,8 +89,8 @@ AccountSchema.pre("save", (next) => {
   next();
 });
 
-AccountSchema.pre("^find", async (next) => {
-  this.find({ is_email_verified: { $ne: false } });
+AccountSchema.pre(/^find/, function (next) {
+  this.find({ is_email_verified: { $ne: false }, active: { $ne: false } });
   next();
 });
 

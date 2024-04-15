@@ -20,4 +20,12 @@ router
   .route("/updatePassword")
   .patch(AuthController.verifyToken, AuthController.updatePassword);
 
+router
+  .route("/updateAccount")
+  .patch(AuthController.verifyToken, UserController.updateAccount);
+
+router
+  .route("/deleteAccount")
+  .delete(AuthController.verifyToken, UserController.deleteAccount);
+
 module.exports = router;
