@@ -2,10 +2,8 @@ const Community = require("../models/community.models");
 const catchAsync = require("../util/catchAsync");
 
 exports.CreateCommunity = catchAsync(async (req, res, next) => {
-  const { name } = req.body;
-
   // Create a new community instance
-  const newCommunity = await Community.create({ name: name });
+  const newCommunity = await Community.create({ name: req.body.name });
 
   return res.status(201).json({
     status: "success",

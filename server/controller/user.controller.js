@@ -3,25 +3,25 @@ const VerifyMailController = require("./verify_mail.controller");
 const Account = require("../models/account.models");
 const AppError = require("../util/appError");
 
-// exports.register = catchAsync(async (req, res, next) => {
-//   // Create a new account
-//   const newAccount = await Account.create({
-//     username: req.body.username,
-//     email: req.body.email,
-//     password: req.body.password,
-//     passwordConfirm: req.body.passwordConfirm,
-//   });
+exports.register = catchAsync(async (req, res, next) => {
+  // Create a new account
+  const newAccount = await Account.create({
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  });
 
-//   // Send verification email
-//   // await VerifyMailController.sendMail(req, res, email);
+  // Send verification email
+  // await VerifyMailController.sendMail(req, res, email);
 
-//   // const { newAccount } = req;
-//   return res.status(202).json({
-//     status: "success",
-//     message: "Verification email sent successful",
-//     data: { newAccount },
-//   });
-// });
+  // const { newAccount } = req;
+  return res.status(202).json({
+    status: "success",
+    message: "Verification email sent successful",
+    data: { newAccount },
+  });
+});
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};

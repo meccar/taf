@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { trustProxy } = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -21,16 +21,20 @@ const userRoute = require("./routes/user.route");
 const postRoute = require("./routes/post.route");
 const replyRoute = require("./routes/reply.route");
 const ruleRoute = require("./routes/rule.route");
+const voteRoute = require("./routes/vote.route");
 const verifymailRoute = require("./routes/verifymail.route");
 const ErrorHandler = require("./controller/error.controller");
 const protectedRoute = require("./routes/protected.route");
-const JWT = require("./token/jwt");
+// const JWT = require("./token/jwt");
 
 // const { VerifyPaseto, DecryptPayload } = require("./middleware/pasetoAuth");
 const app = express();
 
+
 // Set scurity HTTP headers
 app.use(helmet());
+app.set("trust proxy", true);
+app.set("trust proxy", "loopback");
 
 // Development logging
 if (process.env.NODE_ENV === "development") {
@@ -88,6 +92,7 @@ app.use((req, res, next) => {
 app.use(cookieParser());
 
 app.use("/api/v1/comment", commentRoute);
+app.use("/api/v1/vote", voteRoute);
 app.use("/api/v1/community", communityRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/post", postRoute);
