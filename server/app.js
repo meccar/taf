@@ -1,12 +1,15 @@
 const express = require("express");
 
-const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-// const session = require("express-session");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
+// const session = require("express-session");
 
 // const apiRoutes = require("./api_routes");
 const AppError = require("./util/appError");
@@ -24,8 +27,25 @@ const protectedRoute = require("./routes/protected.route");
 const JWT = require("./token/jwt");
 
 // const { VerifyPaseto, DecryptPayload } = require("./middleware/pasetoAuth");
+const app = express();
 
+// Set scurity HTTP headers
 app.use(helmet());
+
+// Development logging
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+// Limit requests from the same API
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests. Please try again in an hour",
+});
+
+app.use("/api", limiter);
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Headers", "*");
@@ -35,18 +55,37 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({ origin: "*", credentials: true }));
+
+// Body parser, reading data from body into req.body
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(express.static("public"));
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 
+// data sanitisation against NoSQL query injection
+app.use(mongoSanitize());
+
+// data sanitisation against CSS
+app.use(xss());
+
+// prevent http polution
+app.use(
+  hpp({
+    whitelist: ["sth", "sth1", "sth2"],
+  }),
+);
+
+// Seve static files
+app.use(express.static("public"));
+
+// Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
 
+// Cookie parser
 app.use(cookieParser());
-app.use(morgan("dev"));
 
 app.use("/api/v1/comment", commentRoute);
 app.use("/api/v1/community", communityRoute);
@@ -62,6 +101,7 @@ app.use("/user", protectedRoute);
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalURL}`, 404));
 });
+
 app.use(ErrorHandler);
 
 module.exports = app;
