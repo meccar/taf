@@ -82,7 +82,7 @@ AccountSchema.pre("save", async function (next) {
   next();
 });
 
-AccountSchema.pre("save", (next) => {
+AccountSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;

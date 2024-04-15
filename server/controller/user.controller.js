@@ -11,9 +11,12 @@ exports.register = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-
   // Send verification email
-  // await VerifyMailController.sendMail(req, res, email);
+  await VerifyMailController.sendMail(req, res, req.body.email);
+  newAccount.password = undefined;
+  newAccount.is_email_verified = undefined;
+  newAccount.active = undefined;
+  newAccount.role = undefined;
 
   // const { newAccount } = req;
   return res.status(202).json({
