@@ -13,6 +13,7 @@ async function PostProcessor(posts) {
         text,
         picture,
         upvotes,
+        downvotes,
         timestamp,
         community_id,
       }) => {

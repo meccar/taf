@@ -7,15 +7,13 @@ const catchAsync = require("../util/catchAsync");
 const AppError = require("../util/appError");
 
 exports.CreatePost = catchAsync(async (req, res, next) => {
-  const { title, text, picture, communityName } = req.body;
-
   const [decoded, communityID] = await Promise.all([
-    JWT.decodedToken(req.cookies.token), // Assuming decodedToken verifies the token
-    Community.findOne({ name: communityName })
+    JWT.decodedToken(req.cookies.token),
+    Community.findOne({ name: req.body.communityName })
       .lean()
       .then((community) => {
         if (!community) {
-          return Community.create({ name: communityName }).then(
+          return Community.create({ name: req.body.communityName }).then(
             (newCommunity) => newCommunity._id,
           );
         }
@@ -25,9 +23,9 @@ exports.CreatePost = catchAsync(async (req, res, next) => {
 
   // Create a new post instance
   const newPost = await Post.create({
-    title: title,
-    text: text,
-    picture: picture,
+    title: req.body.title,
+    text: req.body.text,
+    picture: req.body.picture,
     user_id: decoded.user_id,
     community_id: communityID,
   });
