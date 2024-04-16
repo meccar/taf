@@ -26,6 +26,10 @@ api/v1/rule                           ||              input [ title, description
 
 api/v1/vote                           ||              input [ post_id, user_id, value ]
 
+                                                      input [ comment_id, user_id, value ]
+                                                      
+                                                      input [ reply_id, user_id, value ]
+
 *value = [ 1, -1 ]
 
 ======================================================================
