@@ -6,36 +6,38 @@ const Account = require("../models/account.models");
 const Config = require("../config/config");
 const VerifyMail = require("../models/verify_mail.models");
 const catchAsync = require("../util/catchAsync");
+const sendEmail = require("../util/email");
+const AppError = require("../util/appError");
 
-exports.sendMail = async (req, res, email) => {
+exports.sendMail = async (req, res, next, email) => {
   const secretCode = crypto.randomBytes(32).toString("hex");
-  const verifyLink = `https://turbo-space-carnival-9jjggjqj7vxfqp6-3000.app.github.dev/api/v1/verifymail/${email}/${secretCode}`;
+  const verifyLink = `${req.protocol}://${req.get("host")}/api/v1/verifymail/${email}/${secretCode}`;
+  const message = `Click on this link to verify your email: ${verifyLink}`;
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: Config.mail,
-      pass: Config.mail_password,
-    },
-  });
+  try {
+    await sendEmail({
+      email: email,
+      subject: "Your reset token (valid for 10 minutes)",
+      message,
+    });
 
-  const mailOptions = {
-    from: Config.mail,
-    to: email,
-    subject: "Confirm your email address",
-    text: `Click on this link to verify your email: ${verifyLink}`,
-  };
+    // Create a new verify mail instance
+    const newVerifyMail = new VerifyMail({
+      email: email,
+      secret_code: secretCode,
+    });
 
-  await transporter.sendMail(mailOptions); // Await throws error on rejection
-
-  // Create a new verify mail instance
-  const newVerifyMail = new VerifyMail({
-    email: email,
-    secret_code: secretCode,
-  });
-
-  // Save the verify mail to the database
-  await newVerifyMail.save();
+    // Save the verify mail to the database
+    await newVerifyMail.save();
+    next();
+  } catch (err) {
+    return next(
+      new AppError(
+        "There was an error sending the email. Try again later!",
+        500,
+      ),
+    );
+  }
 };
 
 exports.verifyMail = catchAsync(async (req, res, next) => {
@@ -46,19 +48,21 @@ exports.verifyMail = catchAsync(async (req, res, next) => {
 
   if (Date.now() > verification.expires_at) {
     this.sendMail(req, res, verification.email);
-    return res.status(400).json({
-      error:
-        "Verification code expired. Please check your email for the latest one.",
-    });
+    return next(
+      new AppError(
+        "Verification code expired. Please check your email for the latest one",
+        400,
+      ),
+    );
   }
 
   if (!verification) {
-    return res.status(404).json({ message: "Invalid verification details" });
+    return next(new AppError("Invalid verification details", 404));
   }
 
   // Check if verification has already been used
   if (verification.is_used) {
-    return res.status(400).json({ message: "Account already registered" });
+    return next(new AppError("Account already registered", 400));
   }
 
   verification.is_used = true;

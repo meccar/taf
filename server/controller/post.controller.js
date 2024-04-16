@@ -9,11 +9,11 @@ const AppError = require("../util/appError");
 exports.CreatePost = catchAsync(async (req, res, next) => {
   const [decoded, communityID] = await Promise.all([
     JWT.decodedToken(req.cookies.token),
-    Community.findOne({ name: req.body.communityName })
+    await Community.findOne({ name: req.body.community_name })
       .lean()
       .then((community) => {
         if (!community) {
-          return Community.create({ name: req.body.communityName }).then(
+          return Community.create({ name: req.body.community_name }).then(
             (newCommunity) => newCommunity._id,
           );
         }
@@ -46,12 +46,13 @@ exports.GetAllPost = catchAsync(async (req, res, next) => {
     .paginate();
   const posts = await features.query;
 
-  const postDetails = await postProcessor(posts);
+  // await Community.findById(posts.community_id);
+  // const postDetails = await postProcessor(posts);
 
   return res.status(200).json({
     status: "success",
-    length: postDetails.length,
-    data: { Posts: postDetails },
+    length: posts.length,
+    data: { Posts: posts },
   });
 });
 

@@ -8,6 +8,7 @@ const {
 const RuleSchema = new mongoose.Schema({
   community_id: {
     type: ObjectId,
+    ref: "communities",
   },
   title: {
     type: String,

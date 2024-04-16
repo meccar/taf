@@ -10,7 +10,7 @@ const sendEmail = require("../util/email");
 const JWT = require("../token/jwt");
 
 const createSendToken = (user, statusCode, res) => {
-  const token = JWT.generateCookie(user._id);
+  const token = JWT.generateToken(user._id);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000,
@@ -36,10 +36,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // Check if account exists and email is verified concurrently
   // const [user, isEmailVerified, passwordMatch] = await Promise.all([
+
   const user = await Account.findOne({
     $or: [{ email: req.body.email }, { username: req.body.username }],
   }).select("+password");
-
   if (
     !user ||
     !(await user.correctPassword(req.body.password, user.password))

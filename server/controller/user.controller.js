@@ -13,6 +13,7 @@ exports.register = catchAsync(async (req, res, next) => {
   });
   // Send verification email
   await VerifyMailController.sendMail(req, res, req.body.email);
+
   newAccount.password = undefined;
   newAccount.is_email_verified = undefined;
   newAccount.active = undefined;

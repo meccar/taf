@@ -8,9 +8,11 @@ const {
 const CommentSchema = new mongoose.Schema({
   post_id: {
     type: ObjectId,
+    ref: "posts",
   },
   user_id: {
     type: ObjectId,
+    ref: "accounts",
   },
   text: {
     type: String,
@@ -24,7 +26,7 @@ const CommentSchema = new mongoose.Schema({
   reply_id: [
     {
       type: ObjectId,
-      ref: "Reply",
+      ref: "replies",
       default: [],
     },
   ],
@@ -32,6 +34,14 @@ const CommentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+CommentSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "reply_id",
+    select: "-__v",
+  });
+  next();
 });
 
 const Comment = mongoose.model("comments", CommentSchema);

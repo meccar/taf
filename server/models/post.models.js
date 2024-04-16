@@ -25,23 +25,31 @@ const PostSchema = new mongoose.Schema({
   },
   user_id: {
     type: ObjectId,
-    ref: "Account",
+    ref: "accounts",
   },
   community_id: {
     type: ObjectId,
-    ref: "Community",
+    ref: "communities",
   },
   comment_id: [
     {
       type: ObjectId,
-      ref: "Comment",
+      ref: "comments",
       default: [],
     },
   ],
   timestamp: {
     type: Date,
-    default: Date.now, // Set timestamp on creation
+    default: Date.now,
   },
+});
+
+PostSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "user_id community_id comment_id",
+    select: "-__v",
+  });
+  next();
 });
 
 const Post = mongoose.model("posts", PostSchema);

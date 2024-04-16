@@ -4,88 +4,94 @@ const cookieParser = require("cookie-parser");
 
 const Config = require("../config/config");
 const option = require("../config/jwtConfig");
+const catchAsync = require("../util/catchAsync");
 
 // Function to generate JWT token asynchronously
-class JWT {
-  async generateToken(user_id) {
-    const payload = {
-      user_id,
-    }
-    try {
-      return new Promise((resolve, reject) => {
-        jwt.sign(payload, Config.privateKey, option, (err, token) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(token);
-          }
-        });
-      });
-    } catch (error) {
-      throw new Error("Failed to generate JWT token: " + error.message);
-    }
+exports.generateToken = (id) => jwt.sign({ id }, Config.privateKey, option);
+
+exports.verifyToken = catchAsync(async (req, res, next) => {
+  // Get the token from the cookie
+  // const { token } = req.cookies;
+
+  if (!req.cookies.token) {
+    // Token is missing, throw specific error
+    throw new Error("Access denied");
   }
 
-  async generateTokens(user_id) {
+  // Verify the token
+  const decodedToken = await jwt.verify(req.cookies.token, Config.privateKey);
 
+  // Token is valid, set decoded data and proceed
+  req.decodedToken = decodedToken;
+  next();
+});
 
-    try {
-      const accessToken = await this.generateToken(user_id);
-      const refreshToken = await this.generateToken(user_id);
-      return { accessToken, refreshToken };
-    } catch (error) {
-      throw new Error("Failed to generate JWT tokens: " + error.message);
-    }
-  }
+exports.decodedToken = (token) => {
+  // Decode the token and return the payload (consider using verification with secret key for better security)
+  const decoded = jwt.decode(token);
+  return decoded;
+};
 
-  async generateCookie(req, res, token) {
-    try {
-      const cookieOptions = {
-        httpOnly: false,
-        secure: Config.node_env === "production",
-        sameSite: "lax",
-        path: "/",
-        expires: new Date(Date.now() + 99999999999),
-      };
+// class JWT {
+//   async generateTokens(user_id) {
+//     try {
+//       const accessToken = await this.generateToken(user_id);
+//       const refreshToken = await this.generateToken(user_id);
+//       return { accessToken, refreshToken };
+//     } catch (error) {
+//       throw new Error(`Failed to generate JWT tokens: ${error.message}`);
+//     }
+//   }
 
-      // await res.setHeader("Bearer", cookie.serialize(token));
+//   async generateCookie(req, res, token) {
+//     try {
+//       const cookieOptions = {
+//         httpOnly: false,
+//         secure: Config.node_env === "production",
+//         sameSite: "lax",
+//         path: "/",
+//         expires: new Date(Date.now() + 99999999999),
+//       };
 
-      await res.cookie("token", token, cookieOptions);
-    } catch (error) {
-      throw error;
-    }
-  }
+//       // await res.setHeader("Bearer", cookie.serialize(token));
 
-  async verifyToken(req, res, next) {
-    try {
-      // Get the token from the cookie
-      const token = req.cookies.token;
-  
-      if (!token) {
-        // Token is missing, throw specific error
-        throw new Error("Access denied");
-      }
-  
-      // Verify the token
-      const decodedToken = await jwt.verify(token, Config.privateKey);
-  
-      // Token is valid, set decoded data and proceed
-      req.decodedToken = decodedToken;
-      next();
-    } catch (error) {
-      return res.status(200).json({ status:"fail", message: "Failed to verify user" });
-    }
-  }
+//       await res.cookie("token", token, cookieOptions);
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
 
-  async decodedToken(token) {
-    try {
-      // Decode the token and return the payload (consider using verification with secret key for better security)
-      const decoded = jwt.decode(token);
-      return decoded;
-    } catch (error) {
-      throw new Error("Can't verify user");
-    }
-  }
+//   async verifyToken(req, res, next) {
+//     try {
+//       // Get the token from the cookie
+//       const { token } = req.cookies;
 
-}
-module.exports = new JWT();
+//       if (!token) {
+//         // Token is missing, throw specific error
+//         throw new Error("Access denied");
+//       }
+
+//       // Verify the token
+//       const decodedToken = await jwt.verify(token, Config.privateKey);
+
+//       // Token is valid, set decoded data and proceed
+//       req.decodedToken = decodedToken;
+//       next();
+//     } catch (error) {
+//       return res
+//         .status(200)
+//         .json({ status: "fail", message: "Failed to verify user" });
+//     }
+//   }
+
+//   async decodedToken(token) {
+//     try {
+//       // Decode the token and return the payload (consider using verification with secret key for better security)
+//       const decoded = jwt.decode(token);
+//       return decoded;
+//     } catch (error) {
+//       throw new Error("Can't verify user");
+//     }
+//   }
+// }
+// module.exports = new JWT();

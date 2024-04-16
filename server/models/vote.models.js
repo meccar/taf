@@ -52,19 +52,19 @@ const VoteSchema = new mongoose.Schema(
   {
     post_id: {
       type: ObjectId,
-      ref: "Post",
+      ref: "posts",
     },
     commnet_id: {
       type: ObjectId,
-      ref: "Comment",
+      ref: "comments",
     },
     reply_id: {
       type: ObjectId,
-      ref: "Reply",
+      ref: "replies",
     },
     user_id: {
       type: ObjectId,
-      ref: "Account",
+      ref: "accounts",
     },
     value: {
       type: Number,
@@ -84,5 +84,13 @@ const VoteSchema = new mongoose.Schema(
   },
 );
 
-const Vote = mongoose.model("vote", VoteSchema);
+// VoteSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "user_id post_id comment_id reply_id",
+//     select: "-__v",
+//   });
+//   next();
+// });
+
+const Vote = mongoose.model("votes", VoteSchema);
 module.exports = Vote;
