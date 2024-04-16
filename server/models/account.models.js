@@ -5,6 +5,10 @@ const bcrypt = require("bcrypt");
 
 const { validatePassword } = require("../util/validator");
 
+const {
+  Types: { ObjectId },
+} = mongoose;
+
 const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -58,6 +62,13 @@ const AccountSchema = new mongoose.Schema({
       message: "Passwords are not the same!",
     },
   },
+  community_id: [
+    {
+      type: ObjectId,
+      ref: "Community",
+      default: [],
+    },
+  ],
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -82,7 +93,7 @@ AccountSchema.pre("save", async function (next) {
   next();
 });
 
-AccountSchema.pre("save", (next) => {
+AccountSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;

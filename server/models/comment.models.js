@@ -17,10 +17,17 @@ const CommentSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  upvotes: {
+  vote: {
     type: Number,
     default: 0,
   },
+  reply_id: [
+    {
+      type: ObjectId,
+      ref: "Reply",
+      default: [],
+    },
+  ],
   timestamp: {
     type: Date,
     default: Date.now,

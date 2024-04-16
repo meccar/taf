@@ -32,15 +32,18 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { username, email, password } = req.body;
+  // const { username, email, password } = req.body.;
 
   // Check if account exists and email is verified concurrently
   // const [user, isEmailVerified, passwordMatch] = await Promise.all([
-  const user = await Account.findOne({ $or: [{ email }, { username }] }).select(
-    "+password",
-  );
+  const user = await Account.findOne({
+    $or: [{ email: req.body.email }, { username: req.body.username }],
+  }).select("+password");
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (
+    !user ||
+    !(await user.correctPassword(req.body.password, user.password))
+  ) {
     return next(new AppError("Incorrect Email or Password", 401));
   }
 
@@ -123,7 +126,9 @@ exports.retrictTo =
   };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  const user = await Account.findOne({ email: req.body.email });
+  const user = await Account.findOne({
+    $or: [{ email: req.body.email }, { username: req.body.username }],
+  });
   if (!user) {
     return next(new AppError("The account does not exist", 404));
   }
@@ -167,7 +172,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .digest("hex");
 
   const user = await Account.findOne({
-    passwoedResetToken: hashedToken,
+    passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
 
@@ -176,7 +181,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   }
 
   user.password = req.body.password;
-  // user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
 
