@@ -1,6 +1,8 @@
 const catchAsync = require("../util/catchAsync");
 const Vote = require("../models/vote.models");
 const Post = require("../models/post.models");
+const Comment = require("../models/comment.models");
+const Reply = require("../models/reply.models");
 
 // exports.GetAllPostvotes = catchAsync(async (req, res, next) => {
 //   const votes = await Vote.Upvote.findOne({ post_id: req.body.post_id });
@@ -47,11 +49,27 @@ exports.AddVote = catchAsync(async (req, res, next) => {
   }
 
   // Update post's vote count
-  await Post.findByIdAndUpdate(
-    req.body.post_id,
-    { $inc: { vote: voteChange } },
-    { new: true, runValidators: true },
-  );
+  if (req.body.post_id) {
+    await Post.findByIdAndUpdate(
+      req.body.post_id,
+      { $inc: { vote: voteChange } },
+      { new: true, runValidators: true },
+    );
+  }
+  if (req.body.comment_id) {
+    await Comment.findByIdAndUpdate(
+      req.body.comment_id,
+      { $inc: { vote: voteChange } },
+      { new: true, runValidators: true },
+    );
+  }
+  if (req.body.reply_id) {
+    await Reply.findByIdAndUpdate(
+      req.body.reply_id,
+      { $inc: { vote: voteChange } },
+      { new: true, runValidators: true },
+    );
+  }
 
   return res.status(200).json({
     status: "success",

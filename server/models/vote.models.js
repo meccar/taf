@@ -54,9 +54,17 @@ const VoteSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "Post",
     },
+    commnet_id: {
+      type: ObjectId,
+      ref: "Comment",
+    },
+    reply_id: {
+      type: ObjectId,
+      ref: "Reply",
+    },
     user_id: {
       type: ObjectId,
-      ref: "User",
+      ref: "Account",
     },
     value: {
       type: Number,
@@ -68,7 +76,11 @@ const VoteSchema = new mongoose.Schema(
     },
   },
   {
-    unique: [{ post_id: 1, user_id: 1 }],
+    unique: [
+      { post_id: 1, user_id: 1 },
+      { commnet_id: 1, user_id: 1 },
+      { reply_id: 1, user_id: 1 },
+    ],
   },
 );
 

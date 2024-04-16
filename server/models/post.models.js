@@ -31,6 +31,13 @@ const PostSchema = new mongoose.Schema({
     type: ObjectId,
     ref: "Community",
   },
+  comment_id: [
+    {
+      type: ObjectId,
+      ref: "Comment",
+      default: [],
+    },
+  ],
   timestamp: {
     type: Date,
     default: Date.now, // Set timestamp on creation

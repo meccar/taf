@@ -17,7 +17,7 @@ const ReplySchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  upvotes: {
+  vote: {
     type: Number,
     default: 0,
   },

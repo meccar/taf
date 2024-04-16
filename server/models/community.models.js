@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+const {
+  Types: { ObjectId },
+} = mongoose;
+
 const CommunitySchema = new mongoose.Schema({
   name: {
     type: String,
@@ -15,10 +19,20 @@ const CommunitySchema = new mongoose.Schema({
     default:
       "https://tafviet.com/wp-content/uploads/2024/03/community-picture.jpg",
   },
-  member: {
-    type: Number,
-    default: 0,
-  },
+  user_id: [
+    {
+      type: ObjectId,
+      ref: "Account",
+      default: [],
+    },
+  ],
+  rule_id: [
+    {
+      type: ObjectId,
+      ref: "Rule",
+      default: [],
+    },
+  ],
   online: {
     type: Number,
     default: 0,
