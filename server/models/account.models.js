@@ -32,10 +32,7 @@ const AccountSchema = new mongoose.Schema({
       message: "Please enter a valid email",
     },
   },
-  is_email_verified: {
-    type: Boolean,
-    default: false,
-  },
+
   role: {
     type: String,
     enum: ["user", "admin"],
@@ -65,16 +62,23 @@ const AccountSchema = new mongoose.Schema({
   community_id: [
     {
       type: ObjectId,
-      ref: "Community",
+      ref: "communities",
       default: [],
     },
   ],
   passwordChangedAt: Date,
   passwordResetToken: String,
+  // emailVerificationToken: String,
   passwordResetExpires: Date,
+  // emailVerificationExpires: Date,
   active: {
     type: Boolean,
     default: true,
+    select: false,
+  },
+  is_email_verified: {
+    type: Boolean,
+    default: false,
     select: false,
   },
   timestamp: {
@@ -131,10 +135,21 @@ AccountSchema.methods.createPasswordResetToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
+
+// AccountSchema.methods.createEmailVerificationToken = function () {
+//   const verificationToken = crypto.randomBytes(32).toString("hex");
+//   this.emailVerificationToken = crypto
+//     .createHash("sha256")
+//     .update(verificationToken)
+//     .digest("hex");
+//   // console.log({ resetToken }, this.emailVerificationToken);
+//   this.emailVerificationExpires = Date.now() + 10 * 60 * 1000;
+//   return verificationToken;
+// };
 
 const Account = mongoose.model("accounts", AccountSchema);
 module.exports = Account;

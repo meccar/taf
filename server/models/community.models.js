@@ -22,14 +22,14 @@ const CommunitySchema = new mongoose.Schema({
   user_id: [
     {
       type: ObjectId,
-      ref: "Account",
+      ref: "accounts",
       default: [],
     },
   ],
   rule_id: [
     {
       type: ObjectId,
-      ref: "Rule",
+      ref: "rules",
       default: [],
     },
   ],
@@ -41,6 +41,14 @@ const CommunitySchema = new mongoose.Schema({
     type: Date,
     default: Date.now, // Set timestamp on creation
   },
+});
+
+CommunitySchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "user_id rule_id",
+    select: "-__v",
+  });
+  next();
 });
 
 const Community = mongoose.model("communities", CommunitySchema);

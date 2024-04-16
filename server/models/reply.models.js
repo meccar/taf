@@ -8,9 +8,11 @@ const {
 const ReplySchema = new mongoose.Schema({
   comment_id: {
     type: ObjectId,
+    ref: "comments",
   },
   user_id: {
     type: ObjectId,
+    ref: "accounts",
   },
   text: {
     type: String,
@@ -26,6 +28,14 @@ const ReplySchema = new mongoose.Schema({
     default: Date.now, // Set timestamp on creation
   },
 });
+
+// ReplySchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "user_id comment_id",
+//     select: "-__v",
+//   });
+//   next();
+// });
 
 const Reply = mongoose.model("replies", ReplySchema);
 module.exports = Reply;

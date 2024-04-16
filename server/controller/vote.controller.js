@@ -4,16 +4,6 @@ const Post = require("../models/post.models");
 const Comment = require("../models/comment.models");
 const Reply = require("../models/reply.models");
 
-// exports.GetAllPostvotes = catchAsync(async (req, res, next) => {
-//   const votes = await Vote.Upvote.findOne({ post_id: req.body.post_id });
-
-//   return res.status(200).json({
-//     status: "success",
-//     length: upvotes.length,
-//     data: { Upvotes: upvotes },
-//   });
-// });
-
 exports.AddVote = catchAsync(async (req, res, next) => {
   // Find existing vote
   const existingVote = await Vote.findOne({
