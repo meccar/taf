@@ -24,9 +24,7 @@ api/v1/reply                          ===>              input [ text ]
 
 api/v1/rule                           ===>              input [ title, description ]
 
-api/v1/vote                           ===>              input [ post_id, user_id, value ]
-                                                      input [ comment_id, user_id, value ]
-                                                      input [ reply_id, user_id, value ]
+
 
 *value = [ 1, -1 ]
 
@@ -63,10 +61,13 @@ request /forgotPassword then check email
 
 
 updatePassword
-api/v1/users/updatePassword        ===>          input [ user_id, passwordCurrent, password, passwordConfirm ]
+api/v1/users/updatePassword           ===>              input [ user_id, passwordCurrent, password, passwordConfirm ]
 
-api/v1/users/updateAccount         ===>          input [ username, email ]
+api/v1/users/updateAccount            ===>              input [ username, email ]
 
+api/v1/vote                           ===>              input [ post_id, user_id, value ]
+                                                        input [ comment_id, user_id, value ]
+                                                        input [ reply_id, user_id, value ]
 
 ======================================================================
 
@@ -87,7 +88,7 @@ FILTER REQUEST:
 
 < 1 > api/v1/post?OBJECT[METHOD]=NUMBER
 
-OBJECT = [ upvotes ]
+OBJECT = [ vote ]
 
 METHOD = [ gte, gt, lte, lt ]
 
