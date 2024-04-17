@@ -1,9 +1,9 @@
 const Community = require("../models/community.models");
 const Post = require("../models/post.models");
 const JWT = require("../token/jwt");
-const APIFeatures = require("../util/apiFeatures");
+// const APIFeatures = require("../util/apiFeatures");
 const catchAsync = require("../util/catchAsync");
-const AppError = require("../util/appError");
+// const AppError = require("../util/appError");
 const handler = require("./handler.controller");
 
 exports.CreatePost = catchAsync(async (req, res, next) => {
@@ -38,55 +38,55 @@ exports.CreatePost = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.GetAllPost = catchAsync(async (req, res, next) => {
-  // const posts = await Post.find();
-  const features = new APIFeatures(Post.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const posts = await features.query;
+exports.GetAllPost = handler.getAll(Post);
+exports.GetPost = handler.getOne(Post);
+exports.UpdatePost = handler.UpdateOne(Post);
+exports.DeletePost = handler.DeleteOne(Post);
 
-  // await Community.findById(posts.community_id);
-  // const postDetails = await postProcessor(posts);
+// exports.GetAllPost = catchAsync(async (req, res, next) => {
+//   // const posts = await Post.find();
+//   const features = new APIFeatures(Post.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
+//   const posts = await features.query;
 
-  return res.status(200).json({
-    status: "success",
-    length: posts.length,
-    data: { Posts: posts },
-  });
-});
+//   // await Community.findById(posts.community_id);
+//   // const postDetails = await postProcessor(posts);
 
-exports.GetPost = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
+//   return res.status(200).json({
+//     status: "success",
+//     length: posts.length,
+//     data: { Posts: posts },
+//   });
+// });
 
-  if (!post) {
-    // return res
-    //   .status(404)
-    //   .json({ status: "fail", message: "Post not founded" });
+// exports.GetPost = catchAsync(async (req, res, next) => {
+//   const post = await Post.findById(req.params.id);
 
-    next(AppError("Post not founded", 404));
-  }
-  return res.status(200).json({ status: "success", data: { post } });
-});
+//   if (!post) {
+//     // return res
+//     //   .status(404)
+//     //   .json({ status: "fail", message: "Post not founded" });
 
-exports.getPostID = async (title) => {
-  const post = await Promise.all([Post.findOne({ title: title })]);
-  return post._id;
-};
+//     next(AppError("Post not founded", 404));
+//   }
+//   return res.status(200).json({ status: "success", data: { post } });
+// });
 
-exports.updatePost = catchAsync(async (req, res) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  res.status(200).json({
-    status: "success",
-    data: {
-      post,
-    },
-  });
-});
+// exports.updatePost = catchAsync(async (req, res) => {
+//   const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   res.status(200).json({
+//     status: "success",
+//     data: {
+//       post,
+//     },
+//   });
+// });
 
 // exports.deletePost = catchAsync(async (req, res) => {
 //   await Post.findByIdAndDelete(req.params.id);
@@ -96,5 +96,3 @@ exports.updatePost = catchAsync(async (req, res) => {
 //     data: null,
 //   });
 // });
-
-exports.deletePost = handler.deleteOne(Post);

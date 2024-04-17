@@ -12,8 +12,8 @@ router
 router
   .route("/:id")
   .post(PostController.GetPost)
-  .patch(PostController.updatePost)
-  .delete(PostController.deletePost);
+  .patch(PostController.UpdatePost)
+  .delete(PostController.DeletePost);
 
 router.route("/:postID/comment", commentRoute);
 
