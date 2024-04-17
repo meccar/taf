@@ -67,7 +67,11 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
+
+  // console.log("token: ", token);
 
   if (!token) {
     return next(
@@ -76,11 +80,11 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   }
 
   const decoded = await promisify(jwt.verify)(token, privateKey);
-  console.log(decoded);
+  // console.log(decoded);
 
-  const currentUser = await Account.findById(decoded.user_id);
+  const currentUser = await Account.findById(decoded.id);
 
-  console.log(currentUser);
+  // console.log(currentUser);
 
   if (!currentUser) {
     return next(
@@ -100,6 +104,7 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   }
 
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 

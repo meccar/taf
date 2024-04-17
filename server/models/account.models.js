@@ -9,83 +9,89 @@ const {
   Types: { ObjectId },
 } = mongoose;
 
-const AccountSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, "Name is required"],
-    minlength: [4, "Name must be at least 4 characters long"],
-    maxlength: [35, "Name cannot exceed 35 characters"],
-    trim: true,
-    match: [
-      /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores",
-    ],
-  },
-  email: {
-    type: String,
-    unique: true,
-    lowercase: true,
-    required: [true, "Email is required"],
-    trim: true,
-    validate: {
-      validator: validator.isEmail,
-      message: "Please enter a valid email",
+const AccountSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: [true, "Name is required"],
+      minlength: [4, "Name must be at least 4 characters long"],
+      maxlength: [35, "Name cannot exceed 35 characters"],
+      trim: true,
+      match: [
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores",
+      ],
     },
-  },
-
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [8, "Password must be at least 8 characters long"],
-    select: false,
-    validate: {
-      validator: validatePassword,
-      message: "Please enter a valid Password",
-    },
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function (el) {
-        return el === this.password;
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      required: [true, "Email is required"],
+      trim: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Please enter a valid email",
       },
-      message: "Passwords are not the same!",
+    },
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters long"],
+      select: false,
+      validate: {
+        validator: validatePassword,
+        message: "Please enter a valid Password",
+      },
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        // This only works on CREATE and SAVE!!!
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: "Passwords are not the same!",
+      },
+    },
+    community_id: [
+      {
+        type: ObjectId,
+        ref: "communities",
+        default: [],
+      },
+    ],
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    // emailVerificationToken: String,
+    passwordResetExpires: Date,
+    // emailVerificationExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    is_email_verified: {
+      type: Boolean,
+      default: false,
+      select: false,
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now, // Set timestamp on creation
     },
   },
-  community_id: [
-    {
-      type: ObjectId,
-      ref: "communities",
-      default: [],
-    },
-  ],
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  // emailVerificationToken: String,
-  passwordResetExpires: Date,
-  // emailVerificationExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
-  is_email_verified: {
-    type: Boolean,
-    default: false,
-    select: false,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now, // Set timestamp on creation
-  },
-});
+);
 
 AccountSchema.pre("save", async function (next) {
   // Only run this func if password was modified

@@ -6,31 +6,35 @@ const catchAsync = require("../util/catchAsync");
 
 const Comment = require("../models/comment.models");
 
-exports.comment = catchAsync(async (req, res, next) => {
-  const { text, post_id } = req.body;
-  // const { post_id } = req.params.post_id
+exports.CreateComment = catchAsync(async (req, res, next) => {
+  const decoded = await JWT.decodedToken(req.cookies.token);
 
-  const [decoded] = await Promise.all([JWT.decodedToken(req.cookies.token)]);
+  if (!req.body.post_id) req.body.post_id = req.params.postID;
 
   // Create a new comment instance
   const newComment = await Comment.create({
-    post_id: post_id,
+    post_id: req.body.post_id,
     user_id: decoded.user_id,
-    text: text,
+    text: req.body.text,
   });
 
   res.status(201).json({
     status: "success",
-    message: "Comment successful",
-    data: { newComment },
+    data: { comment: newComment },
   });
 });
 
-exports.getCommentByPost = async (post_id) => {
-  try {
-    const comments = await Promise.all([Comment.findOne({ post_id: post_id })]);
-    return comments;
-  } catch (error) {
-    throw error;
-  }
-};
+exports.getAllComment = catchAsync(async (req, res, next) => {
+  let filter = {};
+  if (req.params.postID) filter = { post: req.params.postID };
+
+  const comment = await Comment.find(filter);
+
+  res.status(200).json({
+    status: "success",
+    results: comment.length,
+    data: {
+      comment,
+    },
+  });
+});
