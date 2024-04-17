@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const PostController = require("../controller/post.controller");
+const commentRoute = require("./comment.route");
 
 router
   .route("/")
@@ -13,5 +14,7 @@ router
   .post(PostController.GetPost)
   .patch(PostController.updatePost)
   .delete(PostController.deletePost);
+
+router.route("/:postID/comment", commentRoute);
 
 module.exports = router;

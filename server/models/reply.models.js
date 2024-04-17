@@ -5,29 +5,35 @@ const {
   Types: { ObjectId },
 } = mongoose;
 
-const ReplySchema = new mongoose.Schema({
-  comment_id: {
-    type: ObjectId,
-    ref: "comments",
+const ReplySchema = new mongoose.Schema(
+  {
+    comment_id: {
+      type: ObjectId,
+      ref: "comments",
+    },
+    user_id: {
+      type: ObjectId,
+      ref: "accounts",
+    },
+    text: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    vote: {
+      type: Number,
+      default: 0,
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now, // Set timestamp on creation
+    },
   },
-  user_id: {
-    type: ObjectId,
-    ref: "accounts",
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
-  text: {
-    type: String,
-    trim: true,
-    required: true,
-  },
-  vote: {
-    type: Number,
-    default: 0,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now, // Set timestamp on creation
-  },
-});
+);
 
 // ReplySchema.pre(/^find/, function (next) {
 //   this.populate({

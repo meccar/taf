@@ -30,7 +30,6 @@ const protectedRoute = require("./routes/protected.route");
 // const { VerifyPaseto, DecryptPayload } = require("./middleware/pasetoAuth");
 const app = express();
 
-
 // Set scurity HTTP headers
 app.use(helmet());
 app.set("trust proxy", true);
@@ -91,13 +90,13 @@ app.use((req, res, next) => {
 // Cookie parser
 app.use(cookieParser());
 
-app.use("/api/v1/comment", commentRoute);
+// app.use("/api/v1/comment", commentRoute);
 app.use("/api/v1/vote", voteRoute);
 app.use("/api/v1/community", communityRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/users", userRoute);
-app.use("/api/v1/reply", replyRoute);
+// app.use("/api/v1/reply", replyRoute);
 app.use("/api/v1/rule", ruleRoute);
 app.use("/api/v1/verifymail", verifymailRoute);
 

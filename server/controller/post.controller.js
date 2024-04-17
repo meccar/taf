@@ -2,9 +2,9 @@ const Community = require("../models/community.models");
 const Post = require("../models/post.models");
 const JWT = require("../token/jwt");
 const APIFeatures = require("../util/apiFeatures");
-const postProcessor = require("../processor/post.processor");
 const catchAsync = require("../util/catchAsync");
 const AppError = require("../util/appError");
+const handler = require("./handler.controller.js")
 
 exports.CreatePost = catchAsync(async (req, res, next) => {
   const [decoded, communityID] = await Promise.all([
@@ -28,6 +28,7 @@ exports.CreatePost = catchAsync(async (req, res, next) => {
     picture: req.body.picture,
     user_id: decoded.user_id,
     community_id: communityID,
+    comment_id: req.body.comment_id,
   });
 
   return res.status(201).json({
@@ -87,11 +88,13 @@ exports.updatePost = catchAsync(async (req, res) => {
   });
 });
 
-exports.deletePost = catchAsync(async (req, res) => {
-  await Post.findByIdAndDelete(req.params.id);
+// exports.deletePost = catchAsync(async (req, res) => {
+//   await Post.findByIdAndDelete(req.params.id);
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+//   res.status(204).json({
+//     status: "success",
+//     data: null,
+//   });
+// });
+
+exports.deletePost = handler.deleteOne(Post)
