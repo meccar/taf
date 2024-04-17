@@ -26,6 +26,6 @@ router
 
 router
   .route("/deleteAccount")
-  .delete(AuthController.verifyToken, UserController.deleteAccount);
+  .delete(AuthController.verifyToken, UserController.DeleteAccount);
 
 module.exports = router;

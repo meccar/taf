@@ -1,40 +1,47 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 /* eslint-disable prettier/prettier */
-const JWT = require("../token/jwt");
-const catchAsync = require("../util/catchAsync");
+// const JWT = require("../token/jwt");
+// const catchAsync = require("../util/catchAsync");
+const handler = require("./handler.controller");
 
 const Comment = require("../models/comment.models");
 
-exports.CreateComment = catchAsync(async (req, res, next) => {
-  const decoded = await JWT.decodedToken(req.cookies.token);
+exports.CreateComment = handler.createOne(Comment);
+exports.GetAllComment = handler.getAll(Comment);
+exports.GetComment = handler.getOne(Comment);
+exports.UpdateComment = handler.updateOne(Comment);
+exports.DeleteComment = handler.deleteOne(Comment);
 
-  if (!req.body.post_id) req.body.post_id = req.params.postID;
+// exports.createComment = catchAsync(async (req, res, next) => {
+//   // const decoded = await JWT.decodedToken(req.cookies.token);
 
-  // Create a new comment instance
-  const newComment = await Comment.create({
-    post_id: req.body.post_id,
-    user_id: decoded.user_id,
-    text: req.body.text,
-  });
+//   if (!req.body.post_id) req.body.post_id = req.params.postID;
 
-  res.status(201).json({
-    status: "success",
-    data: { comment: newComment },
-  });
-});
+//   // Create a new comment instance
+//   const newComment = await Comment.create({
+//     post_id: req.body.post_id,
+//     user_id: req.body.user_id,
+//     text: req.body.text,
+//   });
 
-exports.getAllComment = catchAsync(async (req, res, next) => {
-  let filter = {};
-  if (req.params.postID) filter = { post: req.params.postID };
+//   res.status(201).json({
+//     status: "success",
+//     data: { comment: newComment },
+//   });
+// });
 
-  const comment = await Comment.find(filter);
+// exports.getAllComment = catchAsync(async (req, res, next) => {
+//   let filter = {};
+//   if (req.params.postID) filter = { post: req.params.postID };
 
-  res.status(200).json({
-    status: "success",
-    results: comment.length,
-    data: {
-      comment,
-    },
-  });
-});
+//   const comment = await Comment.find(filter);
+
+//   res.status(200).json({
+//     status: "success",
+//     results: comment.length,
+//     data: {
+//       comment,
+//     },
+//   });
+// });

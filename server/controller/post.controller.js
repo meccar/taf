@@ -4,7 +4,7 @@ const JWT = require("../token/jwt");
 const APIFeatures = require("../util/apiFeatures");
 const catchAsync = require("../util/catchAsync");
 const AppError = require("../util/appError");
-const handler = require("./handler.controller.js")
+const handler = require("./handler.controller");
 
 exports.CreatePost = catchAsync(async (req, res, next) => {
   const [decoded, communityID] = await Promise.all([
@@ -97,4 +97,4 @@ exports.updatePost = catchAsync(async (req, res) => {
 //   });
 // });
 
-exports.deletePost = handler.deleteOne(Post)
+exports.deletePost = handler.deleteOne(Post);
