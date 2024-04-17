@@ -9,8 +9,21 @@ router
   .post(
     AuthController.verifyToken,
     AuthController.retrictTo("user"),
-    ReplyController.reply,
-  );
+    ReplyController.CreateReply,
+  )
+  .get(ReplyController.GetAllReply);
 
-router.route("/:replyID").get(ReplyController.reply);
+router
+  .route("/:id")
+  .get(ReplyController.GetReply)
+  .patch(
+    AuthController.verifyToken,
+    AuthController.retrictTo("user"),
+    ReplyController.UpdateReply,
+  )
+  .delete(
+    AuthController.verifyToken,
+    AuthController.retrictTo("user"),
+    ReplyController.DeleteReply,
+  );
 module.exports = router;

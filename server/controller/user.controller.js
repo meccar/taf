@@ -2,6 +2,7 @@ const catchAsync = require("../util/catchAsync");
 const VerifyMailController = require("./verify_mail.controller");
 const Account = require("../models/account.models");
 const AppError = require("../util/appError");
+const handler = require("./handler.controller");
 
 exports.register = catchAsync(async (req, res, next) => {
   // Create a new account
@@ -60,14 +61,16 @@ exports.updateAccount = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteAccount = catchAsync(async (req, res, next) => {
-  await Account.findByIdAndUpdate(req.user.id, { active: false });
+exports.DeleteAccount = handler.deleteOne(Account);
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+// exports.deleteAccount = catchAsync(async (req, res, next) => {
+//   await Account.findByIdAndUpdate(req.user.id, { active: false });
+
+//   res.status(204).json({
+//     status: "success",
+//     data: null,
+//   });
+// });
 
 // exports.login = catchAsync(async (req, res, next) => {
 //   const { username, email, password } = req.body;

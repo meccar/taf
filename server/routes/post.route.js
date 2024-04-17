@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const PostController = require("../controller/post.controller");
 const commentRoute = require("./comment.route");
+const AuthController = require("../controller/auth.controller");
 
 router
   .route("/")
@@ -11,9 +12,17 @@ router
 
 router
   .route("/:id")
-  .post(PostController.GetPost)
-  .patch(PostController.updatePost)
-  .delete(PostController.deletePost);
+  .get(PostController.GetPost)
+  .patch(
+    AuthController.verifyToken,
+    AuthController.retrictTo("user"),
+    PostController.UpdatePost,
+  )
+  .delete(
+    AuthController.verifyToken,
+    AuthController.retrictTo("user"),
+    PostController.DeletePost,
+  );
 
 router.route("/:postID/comment", commentRoute);
 
