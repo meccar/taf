@@ -19,7 +19,7 @@ router.patch("/resetPassword/:token", AuthController.resetPassword);
 router.use(AuthController.verifyToken);
 
 router.patch("/updatePassword", AuthController.updatePassword);
-router.get("/me", UserController.GetMe, UserController.getUser);
+router.get("/me", UserController.GetMe);
 router.delete(
   "/deleteMe",
   ImageController.uploadPhoto,
