@@ -83,6 +83,14 @@ const VoteSchema = new mongoose.Schema(
     ],
   },
 );
+// VoteSchema.index(
+//   [
+//     { post_id: 1, user_id: 1 },
+//     { commnet_id: 1, user_id: 1 },
+//     { reply_id: 1, user_id: 1 },
+//   ],
+//   { unique: true },
+// );
 
 // VoteSchema.pre(/^find/, function (next) {
 //   this.populate({
