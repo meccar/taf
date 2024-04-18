@@ -8,13 +8,7 @@ const ImageController = require("../controller/image.controller");
 // router.route("/").post(validateLogin, UserController.login);
 router.post("/login", AuthController.login);
 
-router
-  .route("/register")
-  .post(
-    ImageController.uploadPhoto,
-    ImageController.resizePhoto,
-    UserController.register,
-  );
+router.route("/register").post(UserController.register);
 
 router.get("/logout", UserController.logout);
 
