@@ -10,8 +10,6 @@ router
   .post(
     AuthController.verifyToken,
     AuthController.retrictTo("user"),
-    ImageController.uploadPhoto,
-    ImageController.resizePhoto,
     CommunityController.CreateCommunity,
   )
   .get(CommunityController.GetAllCommunity);

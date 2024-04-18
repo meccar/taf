@@ -8,13 +8,7 @@ const ImageController = require("../controller/image.controller");
 // router.route("/").post(validateLogin, UserController.login);
 router.post("/login", AuthController.login);
 
-router
-  .route("/register")
-  .post(
-    ImageController.uploadPhoto,
-    ImageController.resizePhoto,
-    UserController.register,
-  );
+router.route("/register").post(UserController.register);
 
 router.get("/logout", UserController.logout);
 
@@ -25,7 +19,7 @@ router.patch("/resetPassword/:token", AuthController.resetPassword);
 router.use(AuthController.verifyToken);
 
 router.patch("/updatePassword", AuthController.updatePassword);
-router.get("/me", UserController.GetMe, UserController.getUser);
+router.get("/me", UserController.GetMe);
 router.delete(
   "/deleteMe",
   ImageController.uploadPhoto,

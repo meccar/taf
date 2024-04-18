@@ -28,10 +28,10 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
   let ownerId;
 
   if (req.user) {
-    ownerType = "user";
+    ownerType = "users";
     ownerId = req.user.id;
   } else if (req.community) {
-    ownerType = "community";
+    ownerType = "communities";
     ownerId = req.community.id;
   }
 
@@ -41,7 +41,7 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
     .resize(500, 500)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`public/img/${ownerType}/${req.file.filename}`);
+    .toFile(`../client/public/img/${ownerType}/${req.file.filename}`);
 
   next();
 });
