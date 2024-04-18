@@ -8,7 +8,7 @@ const AuthController = require("../controller/auth.controller");
 router
   .route("/")
   .get(PostController.GetAllPost)
-  .post(PostController.CreatePost);
+  .post(PostController.CheckCommunity, PostController.CreatePost);
 
 router
   .route("/:id")

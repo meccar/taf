@@ -73,7 +73,7 @@ exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     let filter = {};
     if (req.params.postID) filter = { post: req.params.postID };
-    
+
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
