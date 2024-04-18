@@ -4,6 +4,11 @@ const Account = require("../models/account.models");
 const AppError = require("../util/appError");
 const handler = require("./handler.controller");
 
+exports.GetMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.register = catchAsync(async (req, res, next) => {
   // Create a new account
   const newAccount = await Account.create({
@@ -36,7 +41,16 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.updateAccount = catchAsync(async (req, res, next) => {
+exports.DeleteMe = catchAsync(async (req, res, next) => {
+  await Account.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
+exports.UpdateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
@@ -61,16 +75,17 @@ exports.updateAccount = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.CreateAccount = (req, res) => {
+  res.status(500).json({
+    status: "error",
+    message: "This route is not defined! Please use /register instead",
+  });
+};
+
 exports.DeleteAccount = handler.deleteOne(Account);
-
-// exports.deleteAccount = catchAsync(async (req, res, next) => {
-//   await Account.findByIdAndUpdate(req.user.id, { active: false });
-
-//   res.status(204).json({
-//     status: "success",
-//     data: null,
-//   });
-// });
+exports.GetAccount = handler.getOne(Account);
+exports.UpdateAccount = handler.updateOne(Account);
+exports.GetAllAccount = handler.getAll(Account);
 
 // exports.login = catchAsync(async (req, res, next) => {
 //   const { username, email, password } = req.body;

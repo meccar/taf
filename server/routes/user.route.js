@@ -3,29 +3,51 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controller/user.controller");
 const AuthController = require("../controller/auth.controller");
-// const { validateLogin } = require("../middleware/validateLogin");
+const ImageController = require("../controller/image.controller");
 
 // router.route("/").post(validateLogin, UserController.login);
-router.route("/login").post(AuthController.login);
-
-router.route("/register").post(UserController.register);
-
-router.route("/logout").get(UserController.logout);
-
-router.route("/forgotPassword").post(AuthController.forgotPassword);
-
-router.route("/resetPassword/:token").patch(AuthController.resetPassword);
+router.post("/login", AuthController.login);
 
 router
-  .route("/updatePassword")
-  .patch(AuthController.verifyToken, AuthController.updatePassword);
+  .route("/register")
+  .post(
+    ImageController.uploadPhoto,
+    ImageController.resizePhoto,
+    UserController.register,
+  );
+
+router.get("/logout", UserController.logout);
+
+router.post("/forgotPassword", AuthController.forgotPassword);
+
+router.patch("/resetPassword/:token", AuthController.resetPassword);
+
+router.use(AuthController.verifyToken);
+
+router.patch("/updatePassword", AuthController.updatePassword);
+router.get("/me", UserController.GetMe, UserController.getUser);
+router.delete(
+  "/deleteMe",
+  ImageController.uploadPhoto,
+  ImageController.resizePhoto,
+  UserController.DeleteMe,
+);
+router.patch(
+  "/updateMe",
+  ImageController.uploadPhoto,
+  ImageController.resizePhoto,
+  UserController.UpdateMe,
+);
 
 router
-  .route("/updateAccount")
-  .patch(AuthController.verifyToken, UserController.updateAccount);
+  .route("/")
+  .get(UserController.GetAllAccount)
+  .post(UserController.CreateAccount);
 
 router
-  .route("/deleteAccount")
-  .delete(AuthController.verifyToken, UserController.DeleteAccount);
+  .route("/:id")
+  .get(UserController.GetAccount)
+  .patch(UserController.UpdateAccount)
+  .delete(UserController.DeleteAccount);
 
 module.exports = router;
