@@ -69,9 +69,7 @@ const AccountSchema = new mongoose.Schema(
     ],
     passwordChangedAt: Date,
     passwordResetToken: String,
-    // emailVerificationToken: String,
     passwordResetExpires: Date,
-    // emailVerificationExpires: Date,
     active: {
       type: Boolean,
       default: true,
