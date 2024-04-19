@@ -17,9 +17,7 @@ const PostSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Article is required"],
     },
-    picture: {
-      type: String,
-    },
+    picture: [String],
     vote: {
       type: Number,
       default: 0,

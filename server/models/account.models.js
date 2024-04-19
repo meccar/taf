@@ -70,6 +70,11 @@ const AccountSchema = new mongoose.Schema(
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    picture: {
+      type: String,
+      default:
+        "https://tafviet.com/wp-content/uploads/2024/03/user-picture.jpg",
+    },
     active: {
       type: Boolean,
       default: true,
