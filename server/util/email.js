@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const pug = require("pug");
+const htmlToText = require("html-to-text")
 
 module.exports = class Email {
   constructor(user, url) {
@@ -26,7 +28,7 @@ module.exports = class Email {
   }
 
   async send(template, subject) {
-    const html = html.pug.renderFile(`${__dirname}/..views/email/${template}.pug`, {
+    const html = html.pug.renderFile(`${__dirname}/../views/emails/${template}.pug`, {
       username: this.username,
       subject
     });
@@ -39,7 +41,7 @@ module.exports = class Email {
       text: htmlToText.fromString(html)
     };
 
-    await this.new
+    await this.newTransport().sendMail(mailOptions);
   } 
 
   async sendEmailVerification() {
@@ -50,20 +52,3 @@ module.exports = class Email {
     await this.send("passwordReset", "Your password reset token valid for only 10 minutes")
   }
 };
-
-// const sendEmail = async (options) => {
-
-//   //   console.log("before mailOptions");
-//   const mailOptions = {
-//     from: "TAF <info@taf.com>",
-//     to: options.email,
-//     subject: options.subject,
-//     text: options.message,
-//     // html:
-//   };
-
-//   //   console.log("before sendMail");
-//   await transporter.sendMail(mailOptions);
-// };
-
-// module.exports = sendEmail;
