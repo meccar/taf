@@ -11,13 +11,11 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 // const session = require("express-session");
 
-// const apiRoutes = require("./api_routes");
 const AppError = require("./util/appError");
 const commentRoute = require("./routes/comment.route");
 const communityRoute = require("./routes/community.route");
 const contactRoute = require("./routes/contact.route");
 const userRoute = require("./routes/user.route");
-// const logoutRoute = require("./routes/logoutRoute");
 const postRoute = require("./routes/post.route");
 const replyRoute = require("./routes/reply.route");
 const ruleRoute = require("./routes/rule.route");
@@ -25,9 +23,7 @@ const voteRoute = require("./routes/vote.route");
 const verifymailRoute = require("./routes/verifymail.route");
 const ErrorHandler = require("./controller/error.controller");
 const protectedRoute = require("./routes/protected.route");
-// const JWT = require("./token/jwt");
 
-// const { VerifyPaseto, DecryptPayload } = require("./middleware/pasetoAuth");
 const app = express();
 
 // Set scurity HTTP headers
@@ -95,7 +91,7 @@ app.use("/api/v1/vote", voteRoute);
 app.use("/api/v1/community", communityRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/post", postRoute);
-app.use("/api/v1/users", userRoute);
+app.use("/api/v1/user", userRoute);
 // app.use("/api/v1/reply", replyRoute);
 app.use("/api/v1/rule", ruleRoute);
 app.use("/api/v1/verifymail", verifymailRoute);
