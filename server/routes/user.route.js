@@ -13,7 +13,7 @@ router.get("/logout", UserController.logout);
 router.post("/forgotPassword", AuthController.forgotPassword);
 router.patch("/resetPassword/:token", AuthController.resetPassword);
 
-router.use(AuthController.verifyToken);
+// router.use(AuthController.verifyToken);
 
 router.patch("/updatePassword", AuthController.updatePassword);
 router.get("/me", UserController.GetMe, UserController.GetAccount);

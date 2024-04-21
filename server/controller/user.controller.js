@@ -1,8 +1,9 @@
 const catchAsync = require("../util/catchAsync");
-const VerifyMailController = require("./verify_mail.controller");
+// const VerifyMailController = require("./verify_mail.controller");
 const Account = require("../models/account.models");
 const AppError = require("../util/appError");
 const Email = require("../util/email");
+const crypto = require("crypto");
 
 const handler = require("./handler.controller");
 
@@ -19,11 +20,20 @@ exports.register = catchAsync(async (req, res) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
+
   // Send verification email
   // await VerifyMailController.sendMail(req, res, req.body.email);
-  const secretCode = crypto.randomBytes(32).toString("hex");
+  const secretCode = crypto.randomBytes(8).toString("hex");
+
+  console.log("<<< after create account");
+
   const url = `${req.protocol}://${req.get("host")}/api/v1/verifymail/${req.body.email}/${secretCode}`;
+
+  console.log("<<< url: " + url);
+
   await new Email(newAccount, url).sendEmailVerification();
+
+  console.log("<<< after send email");
 
   newAccount.password = undefined;
   newAccount.is_email_verified = undefined;
