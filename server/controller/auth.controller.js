@@ -6,7 +6,7 @@ const Account = require("../models/account.models");
 const { privateKey } = require("../config/config");
 const AppError = require("../util/appError");
 const catchAsync = require("../util/catchAsync");
-const sendEmail = require("../util/email");
+const Email = require("../util/email");
 const JWT = require("../token/jwt");
 
 const createSendToken = (user, statusCode, res) => {
@@ -141,16 +141,17 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? submit a patch request with your new password to ${resetURL}\nIf you didn't forget your password, please ignore this email`;
+  // const message = `Forgot your password? submit a patch request with your new password to ${resetURL}\nIf you didn't forget your password, please ignore this email`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "Your reset token (valid for 10 minutes)",
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: "Your reset token (valid for 10 minutes)",
+    //   message,
+    // });
+    const url = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
+
+    await new Email(user, url).sendPasswordReset();
 
     res.status(200).json({
       status: "success",
