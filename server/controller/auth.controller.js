@@ -8,6 +8,7 @@ const AppError = require("../util/appError");
 const catchAsync = require("../util/catchAsync");
 const Email = require("../util/email");
 const JWT = require("../token/jwt");
+const Config = require("../config/config");
 
 const createSendToken = (user, statusCode, res) => {
   const token = JWT.generateToken(user._id);
@@ -79,7 +80,7 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
     );
   }
 
-  const decoded = await promisify(jwt.verify)(token, privateKey);
+  const decoded = await promisify(jwt.verify)(token, Config.publicKey);
   // console.log(decoded);
 
   const currentUser = await Account.findById(decoded.id);
