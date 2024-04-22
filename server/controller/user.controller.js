@@ -23,8 +23,7 @@ exports.register = catchAsync(async (req, res) => {
 
   // Send verification email
   // await VerifyMailController.sendMail(req, res, req.body.email);
-  // const secretCode = crypto.randomBytes(8).toString("hex");
-  const secretCode = 1234;
+  const secretCode = crypto.randomBytes(32).toString("hex");
 
   const url = `${req.protocol}://${req.get("host")}/api/v1/verifymail/${req.body.email}/${secretCode}`;
   await new Email(newAccount, url).sendEmailVerification();

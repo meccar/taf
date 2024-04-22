@@ -12,8 +12,8 @@ function readPemFile(filePath) {
 }
 
 const Config = {
-  privateKey: readPemFile(path.join(__dirname, "..", "priv.pem")),
-  publicKey: readPemFile(path.join(__dirname, "..", "pub.pem")),
+  privateKey: readPemFile(path.join(__dirname, "..", "id_rsa_priv.pem")),
+  publicKey: readPemFile(path.join(__dirname, "..", "id_rsa_pub.pem")),
 };
 
 module.exports = Config;
