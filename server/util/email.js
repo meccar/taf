@@ -11,9 +11,9 @@ module.exports = class Email {
   }
 
   newTransport() {
-    if (process.env.NODE_ENV === "production") {
-      return 1;
-    }
+    // if (process.env.NODE_ENV === "production") {
+    //   return 1;
+    // }
 
     return nodemailer.createTransport({
       // host: process.env.EMAIL_HOST,
@@ -28,21 +28,30 @@ module.exports = class Email {
   }
 
   async send(template, subject) {
+    console.log("<<< before render html");
+    console.log("<<< template: " + template);
+    console.log("<<< subject: "+ subject);
+
     const html = pug.renderFile(
       `${__dirname}/../views/emails/${template}.pug`,
       {
         username: this.username,
+        url: this.url,
         subject,
       },
     );
+
+    console.log("<<< after render html");
 
     const mailOptions = {
       from: this.from,
       to: this.to,
       subject,
       html,
-      text: htmlToText.fromString(html),
+      text: htmlToText.convert(html),
     };
+
+    console.log("<<< after mailOptions");
 
     await this.newTransport().sendMail(mailOptions);
   }
