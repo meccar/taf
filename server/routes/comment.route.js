@@ -12,6 +12,7 @@ router
   .route("/")
   .post(
     JWT.verifyToken,
+    CommentController.GetCommenter,
     AuthController.retrictTo("user"),
     CommentController.CreateComment,
   )

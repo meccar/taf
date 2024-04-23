@@ -44,9 +44,6 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, Config.publicKey);
 
-  console.log(decoded);  
-  console.log(decoded.sub);
-
   const currentUser = await Account.findById(decoded.sub);
 
   if (!currentUser) {

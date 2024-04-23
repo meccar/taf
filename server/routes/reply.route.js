@@ -9,6 +9,7 @@ router
   .route("/")
   .post(
     JWT.verifyToken,
+    ReplyController.GetReplier,
     AuthController.retrictTo("user"),
     ReplyController.CreateReply,
   )

@@ -5,6 +5,11 @@ const handler = require("./handler.controller");
 
 const Comment = require("../models/comment.models");
 
+exports.GetCommenter = (req, res, next) => {
+  req.body.user = req.user.id;
+  next();
+};
+
 exports.CreateComment = handler.createOne(Comment);
 exports.GetAllComment = handler.getAll(Comment);
 exports.GetComment = handler.getOne(Comment);

@@ -4,6 +4,11 @@ const Reply = require("../models/reply.models");
 // const catchAsync = require("../util/catchAsync");
 const handler = require("./handler.controller");
 
+exports.GetReplier = (req, res, next) => {
+  req.body.user = req.user.id;
+  next();
+};
+
 exports.CreateReply = handler.createOne(Reply);
 exports.GetAllReply = handler.getAll(Reply);
 exports.GetReply = handler.getOne(Reply);
