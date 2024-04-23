@@ -7,10 +7,10 @@ const {
 
 const CommentSchema = new mongoose.Schema(
   {
-    // post: {
-    //   type: ObjectId,
-    //   ref: "posts",
-    // },
+    post: {
+      type: ObjectId,
+      ref: "posts",
+    },
     user: {
       type: ObjectId,
       ref: "accounts",
@@ -42,11 +42,11 @@ const CommentSchema = new mongoose.Schema(
   },
 );
 
-CommentSchema.virtual("post", {
-  ref: "posts",
-  foreignField: "comment",
-  localField: "_id",
-});
+// CommentSchema.virtual("post", {
+//   ref: "posts",
+//   foreignField: "comment",
+//   localField: "_id",
+// });
 
 CommentSchema.pre(/^find/, function (next) {
   this.populate({

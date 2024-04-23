@@ -7,6 +7,7 @@ const Comment = require("../models/comment.models");
 
 exports.GetCommenter = (req, res, next) => {
   req.body.user = req.user.id;
+  req.body.post = req.params.postID;
   next();
 };
 
