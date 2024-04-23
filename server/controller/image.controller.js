@@ -7,7 +7,7 @@ const catchAsync = require("../util/catchAsync");
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
+  if (file.mimetype.startsWith("picture")) {
     cb(null, true);
   } else {
     cb(new AppError("Not an image! Please upload only images.", 400), false);
@@ -46,27 +46,15 @@ exports.resizePhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.uploadMultiPhotos = upload.fields([
-  { name: "imageCover", maxCount: 1 },
-  { name: "images", maxCount: 3 },
-]);
+exports.uploadMultiPhotos = upload.fields([{ name: "picture", maxCount: 3 }]);
 
 exports.resizeMultiPhotos = catchAsync(async (req, res, next) => {
-  if (!req.files.imageCover || !req.files.images) return next();
+  if (!req.files || !req.files.picture) return next();
 
-  // 1) Cover image
-  req.body.imageCover = `post-${req.params.id}-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/posts/${req.body.imageCover}`);
-
-  // 2) Images
-  req.body.images = [];
+  req.body.picture = [];
 
   await Promise.all(
-    req.files.images.map(async (file, i) => {
+    req.files.picture.map(async (file, i) => {
       const filename = `post-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
 
       await sharp(file.buffer)
@@ -75,7 +63,7 @@ exports.resizeMultiPhotos = catchAsync(async (req, res, next) => {
         .jpeg({ quality: 90 })
         .toFile(`public/img/posts/${filename}`);
 
-      req.body.images.push(filename);
+      req.body.picture.push(filename);
     }),
   );
 

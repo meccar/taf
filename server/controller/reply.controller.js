@@ -6,6 +6,7 @@ const handler = require("./handler.controller");
 
 exports.GetReplier = (req, res, next) => {
   req.body.user = req.user.id;
+  req.body.comment = req.params.commentID;
   next();
 };
 

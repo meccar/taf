@@ -7,10 +7,10 @@ const {
 
 const ReplySchema = new mongoose.Schema(
   {
-    // comment: {
-    //   type: ObjectId,
-    //   ref: "comments",
-    // },
+    comment: {
+      type: ObjectId,
+      ref: "comments",
+    },
     user: {
       type: ObjectId,
       ref: "accounts",
@@ -35,11 +35,11 @@ const ReplySchema = new mongoose.Schema(
   },
 );
 
-ReplySchema.virtual("comment", {
-  ref: "comments",
-  foreignField: "reply",
-  localField: "_id",
-});
+// ReplySchema.virtual("comment", {
+//   ref: "comments",
+//   foreignField: "reply",
+//   localField: "_id",
+// });
 
 ReplySchema.pre(/^find/, function (next) {
   this.populate({

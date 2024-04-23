@@ -22,15 +22,15 @@ const PostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    user_id: {
+    user: {
       type: ObjectId,
       ref: "accounts",
     },
-    community_id: {
+    community: {
       type: ObjectId,
       ref: "communities",
     },
-    comment_id: [
+    comment: [
       {
         type: ObjectId,
         ref: "comments",
@@ -56,15 +56,15 @@ const PostSchema = new mongoose.Schema(
 
 PostSchema.pre(/^find/, function (next) {
   this.populate({
-    path: "user_id",
+    path: "user",
     select: "username email picture",
   })
     .populate({
-      path: "community_id",
+      path: "community",
       select: "name",
     })
     .populate({
-      path: "comment_id",
+      path: "comment",
       select: "text vote",
     });
   next();

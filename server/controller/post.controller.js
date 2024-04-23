@@ -3,6 +3,11 @@ const Post = require("../models/post.models");
 const catchAsync = require("../util/catchAsync");
 const handler = require("./handler.controller");
 
+exports.GetCommenter = (req, res, next) => {
+  req.body.user = req.user.id;
+  next();
+};
+
 exports.CheckCommunity = catchAsync(async (req, res, next) => {
   const communityID = await Community.findOne({ name: req.body.community_name })
     .lean()
