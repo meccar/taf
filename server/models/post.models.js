@@ -30,13 +30,13 @@ const PostSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "communities",
     },
-    comment_id: [
-      {
-        type: ObjectId,
-        ref: "comments",
-        default: [],
-      },
-    ],
+    // comment_id: [
+    //   {
+    //     type: ObjectId,
+    //     ref: "comments",
+    //     default: [],
+    //   },
+    // ],
     timestamp: {
       type: Date,
       default: Date.now,
@@ -48,19 +48,24 @@ const PostSchema = new mongoose.Schema(
   },
 );
 
+PostSchema.virtual("comments", {
+  ref: "comments",
+  foreignField: "post",
+  localField: "_id",
+});
+
 PostSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user_id",
-    select: "username email",
-  })
-    .populate({
-      path: "community_id",
-      select: "name picture",
-    })
-    .populate({
-      path: "comment_id",
-      select: "text vote",
-    });
+    select: "username email picture",
+  }).populate({
+    path: "community_id",
+    select: "name picture -user_id",
+  });
+  // .populate({
+  //   path: "comment_id",
+  //   select: "text vote",
+  // });
   next();
 });
 

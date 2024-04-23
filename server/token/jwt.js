@@ -11,17 +11,17 @@ const AppError = require("../util/appError");
 
 // Function to generate JWT token asynchronously
 exports.generateToken = (id) => {
-  const option = {
-    algorithm: "RS256", // Algorithm used for signing
-    expiresIn: 1000 * 60 * 60 * 5, // Expiration time in seconds
-  };
+  // const option = {
+  //   algorithm: "RS256", // Algorithm used for signing
+  //   expiresIn: process.env.JWT_EXPIRES_IN, // Expiration time in seconds
+  // };
 
   const payload = {
     sub: id,
     iat: Date.now(),
   };
 
-  return jwt.sign(payload, Config.privateKey, option);
+  return jwt.sign(payload, Config.privateKey, Config.option);
 };
 
 exports.verifyToken = catchAsync(async (req, res, next) => {
@@ -44,7 +44,10 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, Config.publicKey);
 
-  const currentUser = await Account.findById(decoded.id);
+  console.log(decoded);  
+  console.log(decoded.sub);
+
+  const currentUser = await Account.findById(decoded.sub);
 
   if (!currentUser) {
     return next(

@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require("path");
+
 require("dotenv").config({ path: "./app.env" });
 
 const Config = {
@@ -10,18 +12,15 @@ const Config = {
     path.join(__dirname, "..", "id_rsa_pub.pem"),
     "utf8",
   ),
+  header: {
+    alg: "RS256", // Example algorithm (use the one you need)
+    typ: "JWT", // Example token type
+  },
+
+  option: {
+    algorithm: "RS256", // Algorithm used for signing
+    expiresIn: process.env.JWT_EXPIRES_IN, // Expiration time in seconds
+  },
 };
 
-const header = {
-  alg: "RS256", // Example algorithm (use the one you need)
-  typ: "JWT", // Example token type
-};
-
-const option = {
-  algorithm: "RS256", // Algorithm used for signing
-  expiresIn: process.env.JWT_EXPIRES_IN, // Expiration time in seconds
-  header,
-};
-
-module.exports = option;
 module.exports = Config;

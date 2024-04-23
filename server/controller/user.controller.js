@@ -1,5 +1,4 @@
 const catchAsync = require("../util/catchAsync");
-// const VerifyMailController = require("./verify_mail.controller");
 const Account = require("../models/account.models");
 const AppError = require("../util/appError");
 const Email = require("../util/email");
@@ -23,28 +22,15 @@ exports.register = catchAsync(async (req, res) => {
 
   // Send verification email
   // await VerifyMailController.sendMail(req, res, req.body.email);
-<<<<<<< HEAD
   const secretCode = crypto.randomBytes(32).toString("hex");
-=======
-  const secretCode = crypto.randomBytes(8).toString("hex");
-
-  console.log("<<< after create account");
->>>>>>> refs/remotes/origin/meccar
+  // const secretCode = crypto.randomBytes(8).toString("hex");
 
   const url = `${req.protocol}://${req.get("host")}/api/v1/verifymail/${req.body.email}/${secretCode}`;
 
-  console.log("<<< url: " + url);
-
   await new Email(newAccount, url).sendEmailVerification();
 
-  console.log("<<< after send email");
-
   newAccount.password = undefined;
-  newAccount.is_email_verified = undefined;
-  newAccount.active = undefined;
-  newAccount.role = undefined;
 
-  // const { newAccount } = req;
   return res.status(202).json({
     status: "success",
     message: "Verification email sent successful",

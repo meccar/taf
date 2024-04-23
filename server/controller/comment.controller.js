@@ -1,8 +1,6 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 /* eslint-disable prettier/prettier */
-// const JWT = require("../token/jwt");
-// const catchAsync = require("../util/catchAsync");
 const handler = require("./handler.controller");
 
 const Comment = require("../models/comment.models");

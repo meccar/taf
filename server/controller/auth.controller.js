@@ -33,10 +33,6 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.login = catchAsync(async (req, res, next) => {
-  // const { username, email, password } = req.body.;
-
-  // Check if account exists and email is verified concurrently
-  // const [user, isEmailVerified, passwordMatch] = await Promise.all([
 
   const user = await Account.findOne({
     $or: [{ email: req.body.email }, { username: req.body.username }],
@@ -72,8 +68,6 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
 
-  // console.log("token: ", token);
-
   if (!token) {
     return next(
       new AppError("You are not logged in! Please log in to get access", 401),
@@ -81,19 +75,14 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   }
 
   const decoded = await promisify(jwt.verify)(token, Config.publicKey);
-  // console.log(decoded);
 
   const currentUser = await Account.findById(decoded.id);
-
-  // console.log(currentUser);
 
   if (!currentUser) {
     return next(
       new AppError("The user belonging to this token no longer exists", 401),
     );
   }
-
-  // console.log(currentUser.changedPasswordAfter(decoded.iat));
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
@@ -108,17 +97,6 @@ exports.verifyToken = catchAsync(async (req, res, next) => {
   res.locals.user = currentUser;
   next();
 });
-
-// exports.retrictTo = (...roles) => {
-//   (req, res, next) => {
-//     if (!roles.includes(req.user.role)) {
-//       return next(
-//         new AppError("You do not have permission to perform this action", 403),
-//       );
-//     }
-//     next();
-//   };
-// };
 
 exports.retrictTo =
   (...roles) =>
@@ -142,14 +120,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  // const message = `Forgot your password? submit a patch request with your new password to ${resetURL}\nIf you didn't forget your password, please ignore this email`;
-
   try {
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: "Your reset token (valid for 10 minutes)",
-    //   message,
-    // });
     const url = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
 
     await new Email(user, url).sendPasswordReset();

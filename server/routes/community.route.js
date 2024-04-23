@@ -4,11 +4,12 @@ const router = express.Router();
 const CommunityController = require("../controller/community.controller");
 const AuthController = require("../controller/auth.controller");
 const ImageController = require("../controller/image.controller");
+const JWT = require("../token/jwt");
 
 router
   .route("/")
   .post(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     CommunityController.CreateCommunity,
   )
@@ -18,14 +19,14 @@ router
   .route("/:id")
   .get(CommunityController.GetCommunity)
   .patch(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     ImageController.uploadPhoto,
     ImageController.resizePhoto,
     CommunityController.UpdateCommunity,
   )
   .delete(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     CommunityController.DeleteCommunity,
   );

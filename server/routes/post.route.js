@@ -1,16 +1,19 @@
 const express = require("express");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const PostController = require("../controller/post.controller");
 const commentRoute = require("./comment.route");
 const AuthController = require("../controller/auth.controller");
 const ImageController = require("../controller/image.controller");
+const JWT = require("../token/jwt");
+
+router.use("/:postID/comment", commentRoute);
 
 router
   .route("/")
   .get(PostController.GetAllPost)
   .post(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     PostController.CheckCommunity,
     ImageController.uploadMultiPhotos,
     ImageController.resizeMultiPhotos,
@@ -21,18 +24,16 @@ router
   .route("/:id")
   .get(PostController.GetPost)
   .patch(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     ImageController.uploadMultiPhotos,
     ImageController.resizeMultiPhotos,
     PostController.UpdatePost,
   )
   .delete(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     PostController.DeletePost,
   );
-
-router.route("/:postID/comment", commentRoute);
 
 module.exports = router;
