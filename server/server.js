@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-// const Config = require("./config/config");
-
-// const { PORT, DB_PASSWORD, DB } = Config;
+process.on("uncaughtException", (err) => {
+  console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
 dotenv.config({ path: "./app.env" });
-
 const app = require("./app");
 
-const port = process.env.PORT || 3000;
 const url = process.env.MONGODB.replace(
   "<password>",
   process.env.MONGODB_PASSWORD,
@@ -17,6 +17,22 @@ const url = process.env.MONGODB.replace(
 
 mongoose.connect(url).then(() => console.log("Connected to MongoDB"));
 
-app.listen(port, () => {
+const port = process.env.PORT || 3000;
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log("UNHANDLED REJECTION! 💥 Shutting down...");
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on("SIGTERM", () => {
+  console.log("👋 SIGTERM RECEIVED. Shutting down gracefully");
+  server.close(() => {
+    console.log("💥 Process terminated!");
+  });
 });

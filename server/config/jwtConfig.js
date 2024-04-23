@@ -7,7 +7,7 @@ const header = {
 
 const option = {
   algorithm: "RS256", // Algorithm used for signing
-  expiresIn: 60 * 60 * 5, // Expiration time in seconds
+  expiresIn: 1000 * 60 * 60 * 5, // Expiration time in seconds
   header,
 };
 

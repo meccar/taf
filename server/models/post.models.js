@@ -48,14 +48,20 @@ const PostSchema = new mongoose.Schema(
   },
 );
 
+// PostSchema.virtual("comment", {
+//   ref: "comments",
+//   foreignField: "post",
+//   localField: "_id",
+// });
+
 PostSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user_id",
-    select: "username email",
+    select: "username email picture",
   })
     .populate({
       path: "community_id",
-      select: "name picture",
+      select: "name",
     })
     .populate({
       path: "comment_id",

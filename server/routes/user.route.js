@@ -4,8 +4,8 @@ const router = express.Router();
 const UserController = require("../controller/user.controller");
 const AuthController = require("../controller/auth.controller");
 const ImageController = require("../controller/image.controller");
+const JWT = require("../token/jwt");
 
-// router.route("/").post(validateLogin, UserController.login);
 router.post("/login", AuthController.login);
 router.post("/register", UserController.register);
 router.get("/logout", UserController.logout);
@@ -13,7 +13,7 @@ router.get("/logout", UserController.logout);
 router.post("/forgotPassword", AuthController.forgotPassword);
 router.patch("/resetPassword/:token", AuthController.resetPassword);
 
-// router.use(AuthController.verifyToken);
+router.use(JWT.verifyToken);
 
 router.patch("/updatePassword", AuthController.updatePassword);
 router.get("/me", UserController.GetMe, UserController.GetAccount);

@@ -1,9 +1,6 @@
 const Community = require("../models/community.models");
 const Post = require("../models/post.models");
-// const JWT = require("../token/jwt");
-// const APIFeatures = require("../util/apiFeatures");
 const catchAsync = require("../util/catchAsync");
-// const AppError = require("../util/appError");
 const handler = require("./handler.controller");
 
 exports.CheckCommunity = catchAsync(async (req, res, next) => {

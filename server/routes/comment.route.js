@@ -4,11 +4,15 @@ const router = express.Router({ mergeParams: true });
 const CommentController = require("../controller/comment.controller");
 const AuthController = require("../controller/auth.controller");
 const replyRoute = require("./reply.route");
+const JWT = require("../token/jwt");
+
+router.use("/:commentID/reply", replyRoute);
 
 router
   .route("/")
   .post(
-    AuthController.verifyToken,
+    JWT.verifyToken,
+    CommentController.GetCommenter,
     AuthController.retrictTo("user"),
     CommentController.CreateComment,
   )
@@ -18,16 +22,14 @@ router
   .route("/:id")
   .get(CommentController.GetComment)
   .patch(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     CommentController.UpdateComment,
   )
   .delete(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     CommentController.DeleteComment,
   );
-
-router.route("/:commentID/reply", replyRoute);
 
 module.exports = router;

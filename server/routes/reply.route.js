@@ -3,11 +3,13 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const AuthController = require("../controller/auth.controller");
 const ReplyController = require("../controller/reply.controller");
+const JWT = require("../token/jwt");
 
 router
   .route("/")
   .post(
-    AuthController.verifyToken,
+    JWT.verifyToken,
+    ReplyController.GetReplier,
     AuthController.retrictTo("user"),
     ReplyController.CreateReply,
   )
@@ -17,13 +19,14 @@ router
   .route("/:id")
   .get(ReplyController.GetReply)
   .patch(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     ReplyController.UpdateReply,
   )
   .delete(
-    AuthController.verifyToken,
+    JWT.verifyToken,
     AuthController.retrictTo("user"),
     ReplyController.DeleteReply,
   );
+
 module.exports = router;
