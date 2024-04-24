@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const mongoose = require("mongoose");
 
 const {
@@ -18,7 +17,7 @@ const CommentSchema = new mongoose.Schema(
     text: {
       type: String,
       required: true,
-      trim: true,
+      // trim: true,
     },
     vote: {
       type: Number,
@@ -42,6 +41,7 @@ const CommentSchema = new mongoose.Schema(
   },
 );
 
+// CommentSchema.index
 // CommentSchema.virtual("post", {
 //   ref: "posts",
 //   foreignField: "comment",

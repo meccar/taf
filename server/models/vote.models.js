@@ -50,19 +50,19 @@ const {
 
 const VoteSchema = new mongoose.Schema(
   {
-    post_id: {
+    post: {
       type: ObjectId,
       ref: "posts",
     },
-    commnet_id: {
+    commnet: {
       type: ObjectId,
       ref: "comments",
     },
-    reply_id: {
+    reply: {
       type: ObjectId,
       ref: "replies",
     },
-    user_id: {
+    user: {
       type: ObjectId,
       ref: "accounts",
     },
@@ -75,14 +75,21 @@ const VoteSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  {
-    unique: [
-      { post_id: 1, user_id: 1 },
-      { commnet_id: 1, user_id: 1 },
-      { reply_id: 1, user_id: 1 },
-    ],
-  },
+  // {
+  //   unique: [
+  //     { post: 1, user: 1 },
+  //     { commnet: 1, user: 1 },
+  //     { reply: 1, user: 1 },
+  //   ],
+  // },
 );
+
+VoteSchema.index(      
+  { post: 1, user: 1 },
+  { commnet: 1, user: 1 },
+  { reply: 1, user: 1 },
+  { unique: true })
+
 // VoteSchema.index(
 //   [
 //     { post_id: 1, user_id: 1 },

@@ -5,11 +5,13 @@ const CommunityController = require("../controller/community.controller");
 const AuthController = require("../controller/auth.controller");
 const ImageController = require("../controller/image.controller");
 const JWT = require("../token/jwt");
+const UserController = require("../controller/user.controller");
 
 router
   .route("/")
   .post(
     JWT.verifyToken,
+    UserController.GetMe,
     AuthController.retrictTo("user"),
     CommunityController.CreateCommunity,
   )

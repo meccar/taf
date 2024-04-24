@@ -6,6 +6,7 @@ const commentRoute = require("./comment.route");
 const AuthController = require("../controller/auth.controller");
 const ImageController = require("../controller/image.controller");
 const JWT = require("../token/jwt");
+const UserController = require("../controller/user.controller");
 
 router.use("/:postID/comment", commentRoute);
 
@@ -14,6 +15,8 @@ router
   .get(PostController.GetAllPost)
   .post(
     JWT.verifyToken,
+    UserController.GetMe,
+    AuthController.retrictTo("user"),
     PostController.CheckCommunity,
     ImageController.uploadMultiPhotos,
     ImageController.resizeMultiPhotos,
