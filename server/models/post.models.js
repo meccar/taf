@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const Comment = requite("./comment.models");
 
 const {
   Types: { ObjectId },
@@ -17,7 +18,10 @@ const PostSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Article is required"],
     },
-    picture: [String],
+    picture: {
+      type: [String],
+      default: [],
+    },
     vote: {
       type: Number,
       default: 0,
@@ -48,10 +52,23 @@ const PostSchema = new mongoose.Schema(
   },
 );
 
-// PostSchema.virtual("comment", {
+PostSchema.virtual("comments", {
+  ref: "comments",
+  foreignField: "post",
+  localField: "_id",
+});
+
+// PostSchema.virtual("comments", {
 //   ref: "comments",
-//   foreignField: "post",
 //   localField: "_id",
+//   foreignField: "post",
+//   get: function () {
+//     return this.populate("comments").comments;
+//   },
+// });
+
+// PostSchema.virtual("comments").get(async function () {
+//   return await Comment.find({ post: this._id });
 // });
 
 PostSchema.pre(/^find/, function (next) {

@@ -19,14 +19,14 @@ const CommunitySchema = new mongoose.Schema({
     default:
       "https://tafviet.com/wp-content/uploads/2024/03/community-picture.jpg",
   },
-  user_id: [
+  user: [
     {
       type: ObjectId,
       ref: "accounts",
       default: [],
     },
   ],
-  rule_id: [
+  rule: [
     {
       type: ObjectId,
       ref: "rules",
@@ -45,7 +45,7 @@ const CommunitySchema = new mongoose.Schema({
 
 CommunitySchema.pre(/^find/, function (next) {
   this.populate({
-    path: "user_id rule_id",
+    path: "user rule",
     select: "-__v",
   });
   next();

@@ -38,11 +38,9 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
-
     if (!doc) {
       return next(new AppError("No document found with that ID", 404));
     }
-
     res.status(201).json({
       status: "success",
       data: {
