@@ -7,7 +7,11 @@ const crypto = require("crypto");
 const handler = require("./handler.controller");
 
 exports.GetMe = (req, res, next) => {
-  req.params.id = req.user.id;
+  if (req.user.id) {
+    req.params.id = req.user.id;
+    req.body.user = req.user.id;
+  }
+  if (req.params.postID) req.body.post = req.params.postID;
   next();
 };
 
