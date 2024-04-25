@@ -34,13 +34,13 @@ const PostSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "communities",
     },
-    comment: [
-      {
-        type: ObjectId,
-        ref: "comments",
-        default: [],
-      },
-    ],
+    // comment: [
+    //   {
+    //     type: ObjectId,
+    //     ref: "comments",
+    //     default: [],
+    //   },
+    // ],
     timestamp: {
       type: Date,
       default: Date.now,
@@ -52,24 +52,11 @@ const PostSchema = new mongoose.Schema(
   },
 );
 
-PostSchema.virtual("comments", {
+PostSchema.virtual("comment", {
   ref: "comments",
   foreignField: "post",
   localField: "_id",
 });
-
-// PostSchema.virtual("comments", {
-//   ref: "comments",
-//   localField: "_id",
-//   foreignField: "post",
-//   get: function () {
-//     return this.populate("comments").comments;
-//   },
-// });
-
-// PostSchema.virtual("comments").get(async function () {
-//   return await Comment.find({ post: this._id });
-// });
 
 PostSchema.pre(/^find/, function (next) {
   this.populate({

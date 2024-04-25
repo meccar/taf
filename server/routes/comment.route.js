@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const CommentController = require("../controller/comment.controller");
 const AuthController = require("../controller/auth.controller");
+const UserController = require("../controller/user.controller");
 const replyRoute = require("./reply.route");
 const JWT = require("../token/jwt");
 
@@ -12,7 +13,7 @@ router
   .route("/")
   .post(
     JWT.verifyToken,
-    CommentController.GetCommenter,
+    UserController.GetMe,
     AuthController.retrictTo("user"),
     CommentController.CreateComment,
   )
