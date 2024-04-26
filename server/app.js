@@ -23,6 +23,7 @@ const voteRoute = require("./routes/vote.route");
 const verifymailRoute = require("./routes/verifymail.route");
 const ErrorHandler = require("./controller/error.controller");
 const protectedRoute = require("./routes/protected.route");
+const kafkaConfig = require("./config/config");
 
 const app = express();
 
@@ -97,6 +98,11 @@ app.use("/api/v1/rule", ruleRoute);
 app.use("/api/v1/verifymail", verifymailRoute);
 
 app.use("/user", protectedRoute);
+
+const kafka = new kafkaConfig();
+kafka.consume("consumer", (value) => {
+  console.log(value);
+});
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalURL}`, 404));

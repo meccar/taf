@@ -1,11 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 const catchAsync = require("../util/catchAsync")
-import {kafka} from "kafkajs";
+const { Kafka } =  require("kafkajs");
 
 require("dotenv").config({ path: "./app.env" });
 
-exports = Config = {
+module.exports = Config = {
   privateKey: fs.readFileSync(
     path.join(__dirname, "..", "id_rsa_priv.pem"),
     "utf8",
@@ -25,14 +25,14 @@ exports = Config = {
   },
 };
 
-exports = class kafkaConfig {
-  constructor(req){
-    this.kafka = new kafka({
+module.exports = class kafkaConfig {
+  constructor(){
+    this.Kafka = new Kafka({
       clientId: "nodejs-kafka",
-      brokers: [req.get("host")]
+      brokers: ["localhost:9093"]
     })
-    this.producer = this.kafka.producer();
-    this.consumer = this.kafka.consumer({groupId: "test-group"})
+    this.producer = this.Kafka.producer();
+    this.consumer = this.Kafka.consumer({groupId: "test-group"})
 
     this.produce = catchAsync( async (topic, messages) => {
         await this.producer.connect();
@@ -59,5 +59,5 @@ exports = class kafkaConfig {
       await this.consumer.disconnect();
     });
   }
-}
+};
 // module.exports = Config;
