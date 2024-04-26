@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "npx jest test.js",
+    "lint": "npx eslint eslint.config.mjs",
     "server": "nodemon server.js",
     "linux": "export $(cat app.env) && nodemon ./server/server.js",
     "win": "set MONGODB_USER=tung14hn && set MONGODB_PASSWORD=Fj2on41PODnlGR7H && set MONGODB_NAME=mongodb && set PORT=3000 && nodemon ./server/app.js"
@@ -33,14 +34,20 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^9.1.1",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.34.1",
+    "globals": "^15.0.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5"
   },
