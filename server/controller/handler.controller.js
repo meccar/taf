@@ -1,6 +1,7 @@
 const catchAsync = require("../util/catchAsync");
 const AppError = require("../util/appError");
 const APIFeatures = require("../util/apiFeatures");
+const KafkaConfig = require('../config/config');
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -79,6 +80,21 @@ exports.getAll = (Model) =>
       .paginate();
 
     const doc = await features.query;
+
+    const kafkaConfig = new KafkaConfig(req);
+    
+    const topic = `Get All ${Model}`;
+    const messages = [
+      { key: 'key1', value: `Getting ${Model}` },
+      { key: 'key2', value: JSON.stringify(doc) },
+    ];
+
+    await kafkaConfig.produce(topic, messages);
+
+    // Consume messages
+    kafkaConfig.consume(topic, (message) => {
+      console.log('Received message:', message);
+    });
 
     res.status(200).json({
       status: "success",

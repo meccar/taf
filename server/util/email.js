@@ -28,9 +28,9 @@ module.exports = class Email {
   }
 
   async send(template, subject) {
-    console.log("<<< before render html");
-    console.log("<<< template: " + template);
-    console.log("<<< subject: "+ subject);
+    // console.log("<<< before render html");
+    // console.log("<<< template: " + template);
+    // console.log("<<< subject: "+ subject);
 
     const html = pug.renderFile(
       `${__dirname}/../views/emails/${template}.pug`,
@@ -41,7 +41,7 @@ module.exports = class Email {
       },
     );
 
-    console.log("<<< after render html");
+    // console.log("<<< after render html");
 
     const mailOptions = {
       from: this.from,
@@ -51,7 +51,7 @@ module.exports = class Email {
       text: htmlToText.convert(html),
     };
 
-    console.log("<<< after mailOptions");
+    // console.log("<<< after mailOptions");
 
     await this.newTransport().sendMail(mailOptions);
   }
