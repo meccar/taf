@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "-": "^0.0.1",
     "@tanstack/react-query": "^5.28.9",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
@@ -22,6 +23,7 @@
     "express-session": "^1.18.0",
     "hpp": "^0.2.3",
     "html-to-text": "^9.0.5",
+    "husky": "^9.0.11",
     "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.4",
     "mongoose-unique-validator": "^5.0.0",
@@ -34,6 +36,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.0.1",
     "react-router-dom": "^6.22.3",
+    "save-dev": "^0.0.1-security",
     "sharp": "^0.33.3",
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
